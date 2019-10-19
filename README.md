@@ -5,3 +5,9 @@
 ## 기술 스택
 
 Node.js, Express, Mongoose
+
+## 환경 변수
+
+- `MONGO_URL`: MongoDB 서버의 주소, (기본값 `mongodb://localhost/space`);
+- `NODE_ENV`: 실행 모드. (기본값 `development`)
+- `PORT`: 앱을 실행할 포트 (기본값 `4000`)

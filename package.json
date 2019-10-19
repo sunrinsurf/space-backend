@@ -1,0 +1,17 @@
+{
+  "name": "space-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/sunrinsurf/space-backend",
+  "author": "Surf",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.7.5",
+    "socket.io": "^2.3.0"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}
