@@ -5,6 +5,7 @@ const AWS = require("aws-sdk");
 const sns = new AWS.SNS({ region: "us-east-1" });
 const throwError = require("../../../lib/throwError");
 const crypto = require("crypto");
+const PhoneCertToken = require("../../../lib/PhoneCertToken");
 
 const key = "phone-number-hidden-key";
 function codeCrypto(code) {
@@ -27,7 +28,6 @@ router.post("/", (req, res) => {
     return throwError("휴대폰 번호는 필수입니다.", 400);
   }
   const PhoneNumber = formatPhone(phone);
-  console.log(PhoneNumber);
   const code = getRandomNumber(6);
   const params = {
     Message: `Space 인증 번호: [${code}]`,
@@ -71,10 +71,10 @@ router.put("/:code", (req, res) => {
   if (data.code !== cryptedCode) {
     return throwError("코드가 같지 않습니다.", 403);
   }
-  if (data.time < new Date().getTime() - 1000 * 60 * 3) {
+  /*if (data.time + 1000 * 60 * 3 < new Date().getTime()) {
     return throwError("3분이 지난 코드입니다.", 403);
-  }
+  }*/
 
-  res.json({ success: true });
+  res.json({ success: true, token: PhoneCertToken.generateToken(phone) });
 });
 module.exports = router;
