@@ -3,7 +3,9 @@ const app = require("./app");
 const socketio = require("socket.io");
 const http = require("http");
 
-const MONGO_URL = process.env.MONGO_URL || "mongodb://localhost/space";
+const MONGO_URL =
+  process.env.MONGO_URL ||
+  "mongodb://ec2-52-79-169-52.ap-northeast-2.compute.amazonaws.com/space";
 const env = process.env.NODE_ENV || "development";
 const PORT = process.env.PORT || 4000;
 
