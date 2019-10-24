@@ -28,7 +28,7 @@ app.use((error, req, res, next) => {
       : "An error has occurred. Please Try Again.";
 
   if (!error.expose) {
-    console.error(error.expose);
+    console.error(error);
   }
 
   res.status(status).json({
