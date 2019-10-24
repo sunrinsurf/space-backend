@@ -71,9 +71,9 @@ router.put("/:code", (req, res) => {
   if (data.code !== cryptedCode) {
     return throwError("코드가 같지 않습니다.", 403);
   }
-  /*if (data.time + 1000 * 60 * 3 < new Date().getTime()) {
+  if (data.time + 1000 * 60 * 3 < new Date().getTime()) {
     return throwError("3분이 지난 코드입니다.", 403);
-  }*/
+  }
 
   res.json({ success: true, token: PhoneCertToken.generateToken(phone) });
 });
