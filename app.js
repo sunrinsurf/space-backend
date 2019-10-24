@@ -5,6 +5,9 @@ const throwError = require("./lib/throwError");
 const getRoutes = require("./lib/getRoutes");
 
 const routes = getRoutes();
+const bodyParser = require("body-parser");
+
+app.use(bodyParser.json({ extended: true }));
 
 routes.forEach(data => {
   app.use(data.path || "/", data.router);

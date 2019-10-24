@@ -1,10 +1,6 @@
 const crypto = require("crypto");
 const express = require("express");
 const router = express.Router();
-const bodyParser = require("body-parser");
-
-router.use(bodyParser.urlencoded({ extended: true }));
-
 router.post("/", (req, res) => {
   var timeNowMil = Date.now();
   var tokenExpireTime;
