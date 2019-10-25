@@ -8,6 +8,7 @@ const mongoose = require("mongoose");
 var MClient = require("mongodb").MongoClient;
 //var Schema = mongoose.Schema;
 const throwError = require("../../lib/throwError");
+const sendLog = require("../../lib/sendLog");
 
 var murl =
   "mongodb://surf:clangsurf@ec2-52-79-169-52.ap-northeast-2.compute.amazonaws.com:27017/";
@@ -116,23 +117,25 @@ router.post("/", (req, res) => {
                           );
                         }
                       });
-                    var logData = {
-                      log:
-                        "Registered! ID = " +
-                        req.body.uid +
-                        ", TIME = " +
-                        getDate()
-                    };
-                    dbo
-                      .collection("syslog")
-                      .insertOne(logData, function(err, res) {
-                        if (err) {
-                          throwError(
-                            "Error occured while inserting logData to database",
-                            500
-                          );
-                        }
-                      });
+                    sendLog("REGISTER", "ID = " + req.body.uid);
+                    // var logData = {
+                    //   log:
+                    //     "[REGISTER] ID = " +
+                    //     req.body.uid +
+                    //     ", TIME = " +
+                    //     getDate(),
+                    //   type: "REGISTER"
+                    // };
+                    // dbo
+                    //   .collection("syslog")
+                    //   .insertOne(logData, function(err2, res) {
+                    //     if (err2) {
+                    //       throwError(
+                    //         "Error occured while inserting logData to database",
+                    //         500
+                    //       );
+                    //     }
+                    //   });
                     res.send("INSERTION SUCCESS : " + successBool);
                     db.close();
                   }
@@ -152,6 +155,61 @@ router.post("/", (req, res) => {
         }
       }
     );
+  });
+});
+
+router.post("/overlap", (req, res) => {
+  var returnValue;
+  var query;
+  MClient.connect(murl, function(err, db) {
+    if (err) {
+      throwError("Failed to connect db", 502, { throwError: true });
+    } else {
+      //Find 겹침
+    }
+    switch (req.body.type) {
+      case "id":
+        query = { uid: req.body.content };
+        break;
+      case "phone":
+        query = { phone: req.body.content };
+        break;
+      case "email":
+        query = { email: req.body.content };
+        break;
+      default:
+        throwError("Cannot get type of data", 500, { logError: true });
+    }
+    var dbo = db.db("sunrinsurf");
+    dbo
+      .collection("userdata")
+      .find(query)
+      .toArray(function(errD, result) {
+        if (errD) throwError("Failed to connect db", 502, { logError: true });
+        else {
+          try {
+            result[0].uid;
+            returnValue = { overlap: true };
+            // if (result[0].uid == undefined) {
+            //   returnValue = { overlap: false };
+            // } else {
+            //   returnValue = { overlap: true };
+            // }
+          } catch (e) {
+            returnValue = { overlap: false };
+          }
+          sendLog(
+            "INQUIRE",
+            "TYPE : " +
+              req.body.type +
+              " | CONTENT : " +
+              req.body.content +
+              " | OVERLAP : " +
+              returnValue.overlap
+          );
+          res.send(returnValue);
+        }
+      });
   });
 });
 
