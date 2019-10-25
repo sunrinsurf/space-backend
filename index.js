@@ -5,7 +5,7 @@ const http = require("http");
 
 const MONGO_URL =
   process.env.MONGO_URL ||
-  "mongodb://ec2-52-79-169-52.ap-northeast-2.compute.amazonaws.com:27017/sunrinsurf";
+  "mongodb://52.79.169.52/sunrinsurf";
 const env = process.env.NODE_ENV || "development";
 const PORT = process.env.PORT || 4000;
 
@@ -17,8 +17,10 @@ const io = socketio(server, {
   path: "/chat"
 });
 
-mongoose.connect(mongoURL).then(() => {
+const auth = require('./db.json');
+mongoose.connect(mongoURL, { ...auth, auth: { authdb: "admin" } }).then(() => {
   server.listen(PORT, () => {
     console.log(`App started on port ${PORT}`);
   });
-});
+})
+  .catch(e => console.error(e))
