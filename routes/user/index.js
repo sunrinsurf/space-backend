@@ -154,58 +154,60 @@ router.post("/", (req, res) => {
 });
 
 router.post("/overlap", (req, res) => {
-  var returnValue;
-  var query;
-  MClient.connect(murl, function(err, db) {
-    if (err) {
-      throwError("Failed to connect db", 502, { throwError: true });
-    } else {
-      //Find 겹침
-    }
-    switch (req.body.type) {
-      case "id":
-        query = { uid: req.body.content };
-        break;
-      case "phone":
-        query = { phone: req.body.content };
-        break;
-      case "email":
-        query = { email: req.body.content };
-        break;
-      default:
-        throwError("Cannot get type of data", 500, { logError: true });
-    }
-    var dbo = db.db("sunrinsurf");
-    dbo
-      .collection("userdata")
-      .find(query)
-      .toArray(function(errD, result) {
-        if (errD) throwError("Failed to connect db", 502, { logError: true });
-        else {
-          try {
-            result[0].uid;
-            returnValue = { overlap: true };
-            // if (result[0].uid == undefined) {
-            //   returnValue = { overlap: false };
-            // } else {
-            //   returnValue = { overlap: true };
-            // }
-          } catch (e) {
-            returnValue = { overlap: false };
+  setTimeout(function() {
+    var returnValue;
+    var query;
+    MClient.connect(murl, function(err, db) {
+      if (err) {
+        throwError("Failed to connect db", 502, { throwError: true });
+      } else {
+        //Find 겹침
+      }
+      switch (req.body.type) {
+        case "id":
+          query = { uid: req.body.content };
+          break;
+        case "phone":
+          query = { phone: req.body.content };
+          break;
+        case "email":
+          query = { email: req.body.content };
+          break;
+        default:
+          throwError("Cannot get type of data", 500, { logError: true });
+      }
+      var dbo = db.db("sunrinsurf");
+      dbo
+        .collection("userdata")
+        .find(query)
+        .toArray(function(errD, result) {
+          if (errD) throwError("Failed to connect db", 502, { logError: true });
+          else {
+            try {
+              result[0].uid;
+              returnValue = { overlap: true };
+              // if (result[0].uid == undefined) {
+              //   returnValue = { overlap: false };
+              // } else {
+              //   returnValue = { overlap: true };
+              // }
+            } catch (e) {
+              returnValue = { overlap: false };
+            }
+            sendLog(
+              "INQUIRE",
+              "TYPE : " +
+                req.body.type +
+                " | CONTENT : " +
+                req.body.content +
+                " | OVERLAP : " +
+                returnValue.overlap
+            );
+            res.send(returnValue);
           }
-          sendLog(
-            "INQUIRE",
-            "TYPE : " +
-              req.body.type +
-              " | CONTENT : " +
-              req.body.content +
-              " | OVERLAP : " +
-              returnValue.overlap
-          );
-          res.send(returnValue);
-        }
-      });
-  });
+        });
+    });
+  }, 1000);
 });
 
 router.get("/:id", (req, res) => {});
