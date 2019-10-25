@@ -28,7 +28,7 @@ router.post("/", (req, res) => {
     return throwError("휴대폰 번호는 필수입니다.", 400);
   }
   const PhoneNumber = formatPhone(phone);
-  const code = getRandomNumber(6);
+  const code = process.env.NODE_ENV === 'test' && req.query.code ? req.query.code : getRandomNumber(6);
   const params = {
     Message: `Space 인증 번호: [${code}]`,
     PhoneNumber
@@ -36,20 +36,19 @@ router.post("/", (req, res) => {
   const cryptedCode = codeCrypto(code);
 
   const chiper = crypto.createCipher("aes-256-gcm", key);
-  const time = new Date().getTime();
-  console.log(time);
+  const time = process.env.NODE_ENV === 'test' && req.query.time ? parseInt(req.query.time) : new Date().getTime();
   let token = chiper.update(
     JSON.stringify({ phone, code: cryptedCode, time }),
     "utf8",
     "base64"
   );
   token += chiper.final("base64");
-  sns
+  const handler = process.env.NODE_ENV !== 'test' && sns
     .publish(params)
-    .promise()
-    .then(() => {
-      res.json({ success: true, token });
-    })
+    .promise();
+  Promise.resolve(handler).then(() => {
+    res.json({ success: true, token });
+  })
     .catch(e => {
       console.error(e);
       throwError("오류가 발생했습니다. 다시 시도해주세요.", 500);

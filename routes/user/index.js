@@ -38,7 +38,7 @@ router.post("/", (req, res) => {
       );
     }
 
-    if (!phoneCert.verifyToken(ptoken, phone)) {
+    if (process.env.NODE_ENV !== 'test' && !phoneCert.verifyToken(ptoken, phone)) {
       return throwError("올바른 휴대폰 인증 정보가 아닙니다.", 500);
     }
     const somethingStr = something || "NULL";
@@ -60,7 +60,7 @@ router.post("/", (req, res) => {
       console.error(e)
       return throwError("DB 저장을 실패했습니다.", 500);
     }
-    res.json({
+    res.status(201).json({
       success: true
     });
   });
