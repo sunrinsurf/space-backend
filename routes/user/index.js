@@ -6,9 +6,10 @@ const crypto = require("crypto");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 var MClient = require("mongodb").MongoClient;
-//var Schema = mongoose.Schema;
+
 const throwError = require("../../lib/throwError");
 const sendLog = require("../../lib/sendLog");
+const phoneCert = require("../../lib/PhoneCertToken");
 
 var murl =
   "mongodb://surf:clangsurf@ec2-52-79-169-52.ap-northeast-2.compute.amazonaws.com:27017/";
@@ -19,11 +20,13 @@ var userInfoSchema = mongoose.Schema({
   password: "string",
   enckey: "string",
   nickname: "string",
-  birthday: "string",
   email: "string",
   phone: "string",
   address: "string",
   interest: "array",
+  regdate: "string",
+  shareitem: "array",
+  transhistory: "array",
   something: "string"
 });
 
@@ -70,7 +73,6 @@ router.post("/", (req, res) => {
             64,
             "sha512",
             (err, testKey) => {
-              //console.log(testKey.toString("base64")); //
               if (Upw === testKey.toString("base64")) {
                 var userInfoSchemaModel = mongoose.model(
                   //making a schema-model
@@ -87,20 +89,30 @@ router.post("/", (req, res) => {
                   password: Upw,
                   enckey: Ukey,
                   nickname: req.body.nickname,
-                  birthday: req.body.birthday,
                   email: req.body.email,
                   phone: req.body.phone,
                   address: req.body.address,
                   interest: req.body.interest,
+                  regdate: getDate(),
+                  shareitem: [],
+                  transhistory: [],
                   something: somethingStr
                 });
+
+                var returnValue = false;
+
                 MClient.connect(murl, function(err, db) {
                   if (err)
                     //database connection failure
                     throwError("Error occured while connecting database", 502, {
                       logError: true
                     });
-                  else {
+                  else if (
+                    !phoneCert.verifyToken(req.body.ptoken, req.body.phone)
+                  ) {
+                    throwError("Phone token does not match", 403);
+                    sendLog("TOKERROR", "Phone token does not match");
+                  } else {
                     //proceed to the insertion
                     var successBool = true;
                     var dbo = db.db("sunrinsurf");
@@ -117,25 +129,8 @@ router.post("/", (req, res) => {
                           );
                         }
                       });
+                    returnValue = true;
                     sendLog("REGISTER", "ID = " + req.body.uid);
-                    // var logData = {
-                    //   log:
-                    //     "[REGISTER] ID = " +
-                    //     req.body.uid +
-                    //     ", TIME = " +
-                    //     getDate(),
-                    //   type: "REGISTER"
-                    // };
-                    // dbo
-                    //   .collection("syslog")
-                    //   .insertOne(logData, function(err2, res) {
-                    //     if (err2) {
-                    //       throwError(
-                    //         "Error occured while inserting logData to database",
-                    //         500
-                    //       );
-                    //     }
-                    //   });
                     res.send("INSERTION SUCCESS : " + successBool);
                     db.close();
                   }
