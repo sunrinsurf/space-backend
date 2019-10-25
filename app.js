@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require('cors');
 const app = express();
 
 const throwError = require("./lib/throwError");
@@ -7,6 +8,9 @@ const getRoutes = require("./lib/getRoutes");
 const routes = getRoutes();
 const bodyParser = require("body-parser");
 
+app.use(cors({
+  origin: process.env.NODE_ENV === 'development' ? '*' : 'surfspace.me'
+}));
 app.use(bodyParser.json({ extended: true }));
 
 routes.forEach(data => {
