@@ -18,6 +18,7 @@
     "socket.io": "^2.3.0"
   },
   "scripts": {
+    "dev": "NODE_ENV=development nodemon index.js",
     "server": "nodemon index.js"
   }
 }
