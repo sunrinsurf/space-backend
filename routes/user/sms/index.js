@@ -6,8 +6,9 @@ const sns = new AWS.SNS({ region: "us-east-1" });
 const throwError = require("../../../lib/throwError");
 const crypto = require("crypto");
 const PhoneCertToken = require("../../../lib/PhoneCertToken");
+const User = require('../../../models/user');
 
-const key = "phone-number-hidden-key";
+const key = settings.PHONE_KEY || "phone-number-hidden-key";
 function codeCrypto(code) {
   return crypto
     .pbkdf2Sync(code.toString(), key.toString("base64"), 100000, 64, "sha512")
@@ -27,6 +28,7 @@ router.post("/", (req, res) => {
   if (!phone) {
     return throwError("휴대폰 번호는 필수입니다.", 400);
   }
+
   const PhoneNumber = formatPhone(phone);
   const code = process.env.NODE_ENV === 'test' && req.query.code ? req.query.code : getRandomNumber(6);
   const params = {
