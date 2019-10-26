@@ -8,17 +8,15 @@ const bodyParser = require("body-parser");
 const throwError = require("../../lib/throwError");
 const sendLog = require("../../lib/sendLog");
 const phoneCert = require("../../lib/PhoneCertToken");
-const promisifyHandler = require('../../lib/promisifyHandler');
 const User = require('../../models/user');
 
 require("dotenv").config();
 
 router.use(bodyParser.json());
 
-router.post("/", (req, res) => {
-  const { uid, password, ptoken, phone, something, nickname, email, interest, address } = req.body;
-  //register
-  promisifyHandler(async () => {
+router.post("/", async (req, res, next) => {
+  try {
+    const { uid, password, ptoken, phone, something, nickname, email, interest, address } = req.body;
     //promisify
     const randomBytes = util.promisify(crypto.randomBytes);
     const pbkdf2 = util.promisify(crypto.pbkdf2);
@@ -63,11 +61,13 @@ router.post("/", (req, res) => {
     res.status(201).json({
       success: true
     });
-  });
+  } catch (e) {
+    next(e);
+  }
 });
 
-router.post("/overlap", (req, res) => {
-  promisifyHandler(async () => {
+router.post("/overlap", async (req, res, next) => {
+  try {
     const { type, content } = req.body;
     if (!type || content === undefined) {
       return throwError(`필수 항목이 필요합니다.`, 400);
@@ -88,7 +88,9 @@ router.post("/overlap", (req, res) => {
     }
     const user = await User.findOne(query);
     res.json({ overlap: !!user });
-  })
+  } catch (e) {
+    next(e);
+  }
 });
 
 router.get("/:id", (req, res) => { });
