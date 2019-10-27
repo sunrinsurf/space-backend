@@ -1,7 +1,12 @@
+// /auth/index.js
+
 const express = require("express");
 const router = express.Router();
 const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
+const User = require("../../models/user");
+const util = require("util");
+const crypto = require("crypto");
 
 router.use(bodyParser.json({ extended: true }));
 
@@ -23,6 +28,29 @@ router.post("/", (req, res) => {
     issuer: "surfspace.me"
   });
   res.send(result);
+});
+
+router.post("/login", async (req, res) => {
+  const { uid, password } = req.body;
+
+  const query = { uid: uid };
+  const user = await User.findOne(query);
+
+  const userSalt = user.enckey;
+  const userPassword = user.password;
+
+  if (userKey == undefined) {
+    res.send(false);
+  }
+  const pbkdf2 = util.promisify(crypto.pbkdf2);
+
+  const key = await pbkdf2(password, userSalt, 100000, 64, "sha512");
+
+  const clientPassword = key.toString("base64");
+
+  if (clientPassword != userPassword) {
+    res.send(false);
+  } else res.send(true);
 });
 
 router.post("/password", (req, res) => {});
