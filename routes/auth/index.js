@@ -53,6 +53,8 @@ router.post("/login", async (req, res) => {
   } else res.send(true);
 });
 
-router.post("/password", (req, res) => {});
+router.post("/password", (req, res) => {
+  res.send("notUsing");
+});
 
 module.exports = router;
