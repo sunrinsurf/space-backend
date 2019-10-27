@@ -11,12 +11,14 @@ const getRoutes = require('./lib/getRoutes');
 
 const routes = getRoutes();
 
-app.use(cors({
-  origin: process.env.NODE_ENV === 'development' ? '*' : 'surfspace.me',
-}));
+app.use(
+  cors({
+    origin: process.env.NODE_ENV === 'development' ? '*' : 'surfspace.me'
+  })
+);
 app.use(bodyParser.json({ extended: true }));
 
-routes.forEach((data) => {
+routes.forEach(data => {
   app.use(data.path || '/', data.router);
 });
 
@@ -27,11 +29,12 @@ app.use(() => {
 });
 // Error 처리 핸들러
 
-app.use((error, req, res, next) => {
+app.use((error, req, res) => {
   const status = error.status || 500;
-  const message = error.message && error.expose
-    ? error.message
-    : 'An error has occurred. Please Try Again.';
+  const message =
+    error.message && error.expose
+      ? error.message
+      : 'An error has occurred. Please Try Again.';
 
   if (!error.expose) {
     console.error(error);
@@ -39,7 +42,7 @@ app.use((error, req, res, next) => {
 
   res.status(status).json({
     status,
-    message,
+    message
   });
 });
 

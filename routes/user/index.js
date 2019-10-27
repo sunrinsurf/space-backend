@@ -6,11 +6,10 @@ const util = require('util');
 const router = express.Router();
 const crypto = require('crypto');
 const bodyParser = require('body-parser');
-const jwt = require('jsonwebtoken');
 const throwError = require('../../lib/throwError');
-const sendLog = require('../../lib/sendLog');
 const phoneCert = require('../../lib/PhoneCertToken');
 const User = require('../../models/user');
+const auth = require('../../lib/middlewares/auth');
 
 require('dotenv').config();
 
@@ -27,7 +26,7 @@ router.post('/', async (req, res, next) => {
       nickname,
       email,
       interest,
-      address,
+      address
     } = req.body;
     // promisify
     const randomBytes = util.promisify(crypto.randomBytes);
@@ -39,7 +38,7 @@ router.post('/', async (req, res, next) => {
       buf.toString('base64'),
       100000,
       64,
-      'sha512',
+      'sha512'
     );
 
     const Ukey = buf.toString('base64');
@@ -48,13 +47,13 @@ router.post('/', async (req, res, next) => {
     const testKey = await pbkdf2(password, Ukey, 100000, 64, 'sha512');
     if (Upw !== testKey.toString('base64')) {
       return throwError('암호화 도중 검증에 실패했습니다.', 500, {
-        logError: true,
+        logError: true
       });
     }
 
     if (
-      process.env.NODE_ENV !== 'test'
-      && !phoneCert.verifyToken(ptoken, phone)
+      process.env.NODE_ENV !== 'test' &&
+      !phoneCert.verifyToken(ptoken, phone)
     ) {
       return throwError('올바른 휴대폰 인증 정보가 아닙니다.', 500);
     }
@@ -69,7 +68,7 @@ router.post('/', async (req, res, next) => {
       phone,
       address,
       interest,
-      something: somethingStr,
+      something: somethingStr
     });
     try {
       await user.save();
@@ -78,7 +77,7 @@ router.post('/', async (req, res, next) => {
       return throwError('DB 저장을 실패했습니다.', 500);
     }
     res.status(201).json({
-      success: true,
+      success: true
     });
   } catch (e) {
     next(e);
@@ -112,21 +111,13 @@ router.post('/overlap', async (req, res, next) => {
   }
 });
 
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', auth.authroized, async (req, res, next) => {
   try {
-    let token;
     let query;
     try {
-      token = req.headers['x-access-token'];
       query = { uid: req.params.id };
     } catch (e) {
       return throwError('필수 항목이 입력되지 않았습니다.');
-    }
-
-    try {
-      jwt.verify(token, query.uid);
-    } catch (e) {
-      return throwError('유효한 토큰이 아닙니다.', 403);
     }
 
     const result = await User.findOne(query);
@@ -137,7 +128,7 @@ router.get('/:id', async (req, res, next) => {
         email: result.email,
         phone: result.phone,
         address: result.address,
-        interest: result.interest,
+        interest: result.interest
       };
       res.json(sendResult);
     } catch (e) {
