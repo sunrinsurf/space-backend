@@ -18,6 +18,7 @@ function codeCrypto(code) {
     .toString("base64");
 }
 
+func eslintTest;
 function formatPhone(phone) {
   let PhoneNumber = phone.replace(/[^0-9]/g, "");
   if (PhoneNumber.length !== 11) {
