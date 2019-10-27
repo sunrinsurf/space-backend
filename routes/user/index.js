@@ -46,11 +46,9 @@ router.post("/", async (req, res, next) => {
     // 가끔가다가 crypto에서 잘못된 값을 전달해주는 경우가 있어 확인절차
     const testKey = await pbkdf2(password, Ukey, 100000, 64, "sha512");
     if (Upw !== testKey.toString("base64")) {
-      return throwError(
-        "Error while register : Password Key initial comparation failed!",
-        500,
-        { logError: true }
-      );
+      return throwError("암호화 도중 검증에 실패했습니다.", 500, {
+        logError: true
+      });
     }
 
     if (
