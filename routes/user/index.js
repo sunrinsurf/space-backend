@@ -113,27 +113,24 @@ router.post('/overlap', async (req, res, next) => {
 
 router.get('/:id', auth.authroized, async (req, res, next) => {
   try {
-    let query;
-    try {
-      query = { uid: req.params.id };
-    } catch (e) {
+    let query = { uid: req.params.id };
+    if (!query) {
       return throwError('필수 항목이 입력되지 않았습니다.');
     }
 
     const result = await User.findOne(query);
-    try {
-      const sendResult = {
-        uid: result.uid,
-        nickname: result.nickname,
-        email: result.email,
-        phone: result.phone,
-        address: result.address,
-        interest: result.interest
-      };
-      res.json(sendResult);
-    } catch (e) {
-      throwError('ID가 존재하지 않습니다.', 400);
+    if (!result) {
+      return throwError('ID가 존재하지 않습니다.', 400);
     }
+    const sendResult = {
+      uid: result.uid,
+      nickname: result.nickname,
+      email: result.email,
+      phone: result.phone,
+      address: result.address,
+      interest: result.interest
+    };
+    res.json(sendResult);
   } catch (e) {
     next(e);
   }

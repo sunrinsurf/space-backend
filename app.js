@@ -29,7 +29,8 @@ app.use(() => {
 });
 // Error 처리 핸들러
 
-app.use((error, req, res) => {
+//eslint-disable-next-line
+app.use((error, req, res, next) => {
   const status = error.status || 500;
   const message =
     error.message && error.expose
