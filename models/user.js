@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const userSchema = mongoose.Schema({
-  //Register Dataset's SCHEMA
+  // Register Dataset's SCHEMA
   uid: String,
   password: String,
   enckey: String,

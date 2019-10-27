@@ -4,7 +4,8 @@ module.exports = {
         "node": true
     },
     "extends": [
-        "airbnb-base"
+        "airbnb-base",
+        "eslint:recommended"
     ],
     "globals": {
         "Atomics": "readonly",
@@ -16,12 +17,13 @@ module.exports = {
     "rules": {
         "no-unused-vars": "warn",
         "no-console": "off",
-        "quotes": "off",
-        "consistent-return": "off",
-        "import/newline-after-import": "warn",
-        "radix": "off",
         "no-undef": "off",
-        "spaced-comment": "off",
-        "indent": "off"
+        "consistent-return": "off",
+        "radix": "off",
+        "global-require": "off",
+        "no-continue": "off",
+        "import/no-dynamic-require": "off",
+        "no-restricted-syntax": "off",
+        "no-plusplus": "off"
     }
 };

@@ -1,12 +1,12 @@
-const socketio = require("socket.io");
-const http = require("http");
-const app = require("./app");
+const socketio = require('socket.io');
+const http = require('http');
+const app = require('./app');
 const connectDB = require('./lib/connectDB');
 
 
 const server = http.createServer(app);
 const io = socketio(server, {
-  path: "/chat",
+  path: '/chat',
 });
 
 const PORT = process.env.PORT || 4000;
