@@ -112,9 +112,17 @@ router.post("/overlap", async (req, res, next) => {
 });
 
 router.get("/:id", async (req, res) => {
-  const query = { uid: req.params.id };
+  let token;
+  let query;
   try {
-    jwt.verify(req.body.token, query.uid);
+    token = req.headers["x-access-token"];
+    query = { uid: req.params.id };
+  } catch (e) {
+    throwError("필수 항목이 입력되지 않았습니다.");
+  }
+
+  try {
+    jwt.verify(token, query.uid);
   } catch (e) {
     res.send("tokenVerifyFailed");
     //return throwError("유효한 토큰이 아닙니다.", 403);
