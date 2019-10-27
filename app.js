@@ -2,6 +2,7 @@ require('./lib/getSettings');
 
 const express = require("express");
 const cors = require('cors');
+
 const app = express();
 
 const throwError = require("./lib/throwError");
@@ -11,11 +12,11 @@ const routes = getRoutes();
 const bodyParser = require("body-parser");
 
 app.use(cors({
-  origin: process.env.NODE_ENV === 'development' ? '*' : 'surfspace.me'
+  origin: process.env.NODE_ENV === 'development' ? '*' : 'surfspace.me',
 }));
 app.use(bodyParser.json({ extended: true }));
 
-routes.forEach(data => {
+routes.forEach((data) => {
   app.use(data.path || "/", data.router);
 });
 
@@ -28,8 +29,7 @@ app.use(() => {
 
 app.use((error, req, res, next) => {
   const status = error.status || 500;
-  const message =
-    error.message && error.expose
+  const message = error.message && error.expose
       ? error.message
       : "An error has occurred. Please Try Again.";
 
@@ -39,7 +39,7 @@ app.use((error, req, res, next) => {
 
   res.status(status).json({
     status,
-    message
+    message,
   });
 });
 

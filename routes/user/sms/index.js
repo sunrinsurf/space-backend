@@ -1,10 +1,13 @@
 const express = require("express");
+
 const router = express.Router();
-const getRandomNumber = require("../../../lib/getRandomNumber");
 const AWS = require("aws-sdk");
+const crypto = require("crypto");
+
 const sns = new AWS.SNS({ region: "us-east-1" });
 const throwError = require("../../../lib/throwError");
-const crypto = require("crypto");
+const getRandomNumber = require("../../../lib/getRandomNumber");
+
 const PhoneCertToken = require("../../../lib/PhoneCertToken");
 const User = require('../../../models/user');
 
@@ -20,22 +23,22 @@ function formatPhone(phone) {
   if (PhoneNumber.length !== 11) {
     return throwError("전화번호 형식에 맞지 않습니다.");
   }
-  PhoneNumber = "+82" + PhoneNumber.slice(1);
+  PhoneNumber = `+82${PhoneNumber.slice(1)}`;
   return PhoneNumber;
 }
 function formatNormalPhone(str) {
-  let data = str.replace(/-/g, "");
+  const data = str.replace(/-/g, "");
   const [num1, num2, num3] = [
     data.slice(0, 3),
     data.slice(3, 7),
-    data.slice(7, 11)
+    data.slice(7, 11),
   ];
   let n = num1;
   if (num2) {
-    n += "-" + num2;
+    n += `-${num2}`;
   }
   if (num3) {
-    n += "-" + num3;
+    n += `-${num3}`;
   }
   return n;
 }
@@ -54,7 +57,7 @@ router.post("/", async (req, res, next) => {
     const code = process.env.NODE_ENV === 'test' && req.query.code ? req.query.code : getRandomNumber(6);
     const params = {
       Message: `Space 인증 번호: [${code}]`,
-      PhoneNumber
+      PhoneNumber,
     };
     const cryptedCode = codeCrypto(code);
 
@@ -63,7 +66,7 @@ router.post("/", async (req, res, next) => {
     let token = chiper.update(
       JSON.stringify({ phone, code: cryptedCode, time }),
       "utf8",
-      "base64"
+      "base64",
     );
     token += chiper.final("base64");
     const handler = process.env.NODE_ENV !== 'test' && sns

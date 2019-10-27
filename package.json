@@ -22,10 +22,14 @@
   "scripts": {
     "dev": "NODE_ENV=development nodemon index.js",
     "server": "nodemon index.js",
-    "test": "NODE_ENV=test mocha"
+    "test": "NODE_ENV=test mocha",
+    "lint": "eslint . --fix"
   },
   "devDependencies": {
     "chai": "^4.2.0",
+    "eslint": "^6.6.0",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-plugin-import": "^2.18.2",
     "mocha": "^6.2.2",
     "supertest": "^4.0.2"
   }

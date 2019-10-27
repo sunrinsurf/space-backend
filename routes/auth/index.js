@@ -1,18 +1,19 @@
 // /auth/index.js
 
 const express = require("express");
+
 const router = express.Router();
 const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
-const User = require("../../models/user");
 const util = require("util");
 const crypto = require("crypto");
+const User = require("../../models/user");
 
 router.use(bodyParser.json({ extended: true }));
 
 router.post("/", (req, res) => {
   let tokenExpireTime;
-  if (req.body.remember == true) {
+  if (req.body.remember === true) {
     //remember == true
     tokenExpireTime = 604800; //exptime = 7d
   } else {
@@ -21,25 +22,23 @@ router.post("/", (req, res) => {
   }
   const payload = {
     userId: req.body.uid,
-    username: req.body.name
+    username: req.body.name,
   };
   const result = jwt.sign(payload, req.body.uid, {
     expiresIn: tokenExpireTime,
-    issuer: "surfspace.me"
+    issuer: "surfspace.me",
   });
   res.send(result);
 });
 
 router.post("/login", async (req, res) => {
   const { uid, password } = req.body;
-
-  const query = { uid: uid };
-  const user = await User.findOne(query);
+  const user = await User.findOne({ uid });
 
   const userSalt = user.enckey;
   const userPassword = user.password;
 
-  if (userKey == undefined) {
+  if (userKey === undefined) {
     res.send(false);
   }
   const pbkdf2 = util.promisify(crypto.pbkdf2);
@@ -48,7 +47,7 @@ router.post("/login", async (req, res) => {
 
   const clientPassword = key.toString("base64");
 
-  if (clientPassword != userPassword) {
+  if (clientPassword !== userPassword) {
     res.send(false);
   } else res.send(true);
 });
