@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 const util = require('util');
 const crypto = require('crypto');
 const User = require('../../models/user');
+const throwError = require('../../lib/throwError');
 
 router.use(bodyParser.json({ extended: true }));
 
