@@ -65,13 +65,11 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.get('/:post', async (req, res, next) => {
+router.get('/:productId', async (req, res, next) => {
   //get specified product info
   try {
     const productId = req.params.productId;
-
-    const product = util.promisify(Product.findById);
-    const result = product(productId);
+    const result = await Product.findById(productId);
 
     if (!result) return throwError('게시글이 존재하지 않습니다.', 400);
 
