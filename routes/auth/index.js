@@ -13,7 +13,7 @@ router.use(bodyParser.json({ extended: true }));
 
 router.post('/', async (req, res, next) => {
   try {
-    const { uid, password } = req.body;
+    const { uid, password, remember } = req.body;
     const user = await User.findOne({ uid });
     if (!user) return throwError('아이디가 없거나 비밀번호가 다릅니다.', 403);
 
@@ -28,7 +28,7 @@ router.post('/', async (req, res, next) => {
       return throwError('아이디가 없거나 비밀번호가 다릅니다.', 403);
 
     let tokenExpireTime;
-    if (req.body.remember === true) {
+    if (remember === true) {
       // remember == true
       tokenExpireTime = 604800; // exptime = 7d
     } else {

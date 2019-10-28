@@ -9,7 +9,7 @@ const userSchema = mongoose.Schema({
   email: String,
   phone: String,
   address: String,
-  interest: [String],
+  interest: [String]
 });
 
 module.exports = mongoose.model('user', userSchema);
