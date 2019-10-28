@@ -41,9 +41,16 @@ router.post('/', async (req, res, next) => {
 router.get('/', async (req, res, next) => {
   //get product info on MAINMENU generally
   try {
-    const dataCount = req.params.count;
-    const interest = req.params.interest;
-    const member = req.params.uid;
+    // const interest = req.params.interest;
+
+    // const productData = Product.findOne;
+
+    // const senderQuery = {};
+    // const senderproduct = Product.findOne;
+
+    const dataCount = req.query.count;
+    const interest = req.query.interest;
+    const member = req.query.uid;
 
     const product = Product.find({ interest: { $in: interest } })
       .sort('-postTime')
@@ -64,13 +71,11 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.get('/:post', async (req, res, next) => {
+router.get('/:productId', async (req, res, next) => {
   //get specified product info
   try {
     const productId = req.params.productId;
-
-    const product = util.promisify(Product.findById);
-    const result = product(productId);
+    const result = await Product.findById(productId);
 
     if (!result) return throwError('게시글이 존재하지 않습니다.', 404);
 
