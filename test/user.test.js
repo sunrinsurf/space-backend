@@ -1,6 +1,5 @@
-const request = require('supertest');
-const app = require('../app');
 const User = require('../models/user');
+const createUser = require('../lib/test/createUser');
 
 const userData = {
     uid: "test01",
@@ -21,16 +20,11 @@ function deleteUser(done) {
 }
 describe("/user", function () {
     describe("create", () => {
-        function createUser() {
-            return request(app)
-                .post('/user')
-                .send(userData)
-        }
         it('should create user', (done) => {
-            createUser().expect(201).end(done);
+            createUser(userData).expect(201).end(done);
         });
         it("should handle exist user", function (done) {
-            createUser().expect(422).expect({
+            createUser(userData).expect(422).expect({
                 status: 422,
                 message: '이미 존재하는 유저입니다.'
             }).end(done);
