@@ -48,8 +48,8 @@ router.get('/', async (req, res, next) => {
     // const senderQuery = {};
     // const senderproduct = Product.findOne;
 
-    const dataCount = req.params.count;
-    const interest = req.params.interest;
+    const dataCount = req.query.count;
+    const interest = req.query.interest;
 
     const product = Product.find({ interest: { $in: interest } })
       .sort('-postTime')
