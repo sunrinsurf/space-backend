@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
 const productSchema = mongoose.Schema({
-  // Register Dataset's SCHEMA
   title: String,
   type: String,
   content: String,
