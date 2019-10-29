@@ -1,16 +1,7 @@
-const User = require('../models/user');
-const createUser = require('../lib/test/createUser');
+const { createUser } = require('../lib/test/userHandle');
 
-const userData = {
-    uid: "test01",
-    password: "password",
-    phone: "010-1234-5968",
-    nickname: "테스트",
-    address: "경기도 남양주시",
-    interest: ["기타"]
-};
 function deleteUser(done) {
-    User.deleteOne({ uid: userData.uid })
+    cleanUp()
         .then(() => {
             done();
         })
@@ -19,18 +10,25 @@ function deleteUser(done) {
         });
 }
 describe("/user", function () {
+    let user;
+    before(function (done) {
+        createUser().then(data => {
+            user = data;
+            done();
+        });
+    })
     describe("create", () => {
         it('should create user', (done) => {
-            createUser(userData).expect(201).end(done);
+            user.postUser().expect(201).end(done);
         });
         it("should handle exist user", function (done) {
-            createUser(userData).expect(422).expect({
+            user.postUser().expect(422).expect({
                 status: 422,
                 message: '이미 존재하는 유저입니다.'
             }).end(done);
         });
         after(function (done) {
-            deleteUser(done);
+            user.cleanUp().then(() => done()).catch(done);
         });
     });
 

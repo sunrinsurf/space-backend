@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const util = require('util');
 const crypto = require('crypto');
+const throwError = require('../../lib/throwError');
 const User = require('../../models/user');
 
 router.use(bodyParser.json({ extended: true }));
@@ -43,7 +44,7 @@ router.post('/', async (req, res, next) => {
       expiresIn: tokenExpireTime,
       issuer: 'surfspace.me'
     });
-    res.json({ token: result });
+    res.status(201).json({ token: result });
   } catch (e) {
     next(e);
   }
