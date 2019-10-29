@@ -6,7 +6,7 @@ const productSchema = mongoose.Schema({
   content: String,
   condition: String,
   owner: String,
-  image: String,
+  image: [{ data: Buffer, type: String }],
   postTime: Number
 });
 

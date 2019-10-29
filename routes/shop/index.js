@@ -50,14 +50,20 @@ router.get('/', async (req, res, next) => {
 
     const dataCount = req.query.count;
     const interest = req.query.interest;
+    const member = req.query.uid;
 
     const product = Product.find({ interest: { $in: interest } })
       .sort('-postTime')
-      .limit(dataCount); //interest 안에 있는 데이터 중 가장 최근순으로 dataCount 만큼의 데이터를 갖고옴
-    if (!product) return throwError('조건에 일치하는 데이터가 없습니다.', 404);
+      .limit(dataCount); //interest 안에 있는 데이터 중 가장 최근순으로 dataCount 만큼의 데이터를 갖고옴 *테스트 아직 안함!
+
+    const chatData = Chat.find(member);
+    if (!product)
+      return throwError('조건에 일치하는 제품 데이터가 없습니다.', 404);
+    if (!chatData)
+      return throwError('조건에 일치하는 채팅 데이터가 없습니다.', 404);
     const result = {
       product: product,
-      chatInfo: 'NOT_READY'
+      chatInfo: chatData
     };
     res.json(result);
   } catch (e) {
@@ -71,7 +77,7 @@ router.get('/:productId', async (req, res, next) => {
     const productId = req.params.productId;
     const result = await Product.findById(productId);
 
-    if (!result) return throwError('게시글이 존재하지 않습니다.', 400);
+    if (!result) return throwError('게시글이 존재하지 않습니다.', 404);
 
     res.json(result);
   } catch (e) {
