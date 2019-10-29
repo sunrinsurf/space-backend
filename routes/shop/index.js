@@ -4,16 +4,14 @@ const express = require('express');
 
 const router = express.Router();
 const bodyParser = require('body-parser');
-const util = require('util');
 const throwError = require('../../lib/throwError');
 
 const Product = require('../../models/product');
-const Chat = require('../../models/chat');
-//const token = require("../../lib/middlewares/auth");
+const auth = require("../../lib/middlewares/auth");
 
 router.use(bodyParser.json({ extended: true }));
 
-router.post('/', async (req, res, next) => {
+router.post('/', auth.authroized, async (req, res, next) => {
   //save product info to db
   try {
     const { title, type, content, condition, owner, image } = req.body;
@@ -50,20 +48,15 @@ router.get('/', async (req, res, next) => {
 
     const dataCount = req.query.count;
     const interest = req.query.interest;
-    const member = req.query.uid;
 
     const product = Product.find({ interest: { $in: interest } })
       .sort('-postTime')
       .limit(dataCount); //interest 안에 있는 데이터 중 가장 최근순으로 dataCount 만큼의 데이터를 갖고옴 *테스트 아직 안함!
 
-    const chatData = Chat.find(member);
     if (!product)
       return throwError('조건에 일치하는 제품 데이터가 없습니다.', 404);
-    if (!chatData)
-      return throwError('조건에 일치하는 채팅 데이터가 없습니다.', 404);
     const result = {
       product: product,
-      chatInfo: chatData
     };
     res.json(result);
   } catch (e) {
