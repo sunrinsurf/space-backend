@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
 
-const productSchema = new mongoose.Schema({
+const productSchema = mongoose.Schema({
   title: {
     type: String,
     required: true
   },
   type: {
     type: String,
-    required: true,
+    required: true
   },
   content: {
     type: String,
@@ -18,14 +18,43 @@ const productSchema = new mongoose.Schema({
     required: true
   },
   owner: {
-    type: mongoose.SchemaTypes.ObjectId,
-    ref: 'user',
+    type: String,
     required: true
   },
   image: {
-    type: [{ data: Buffer, type: String }],
+    data: {
+      type: Buffer,
+      required: true
+    },
+    type: {
+      type: String,
+      required: true
+    }
+  },
+  isEnded: {
+    type: Boolean,
     required: true
   },
+  participant: {
+    type: [String],
+    required: true
+  },
+  royaltyMethod: {
+    type: String,
+    required: true
+  },
+  availableDate: {
+    type: [Date],
+    required: true
+  },
+  shareCount: {
+    type: Number,
+    required: true
+  },
+  shareDuration: {
+    type: Date,
+    required: true
+  }
 });
 
-module.exports = mongoose.model('product', productSchema);
+module.exports = mongoose.model('transactionLog', productSchema);
