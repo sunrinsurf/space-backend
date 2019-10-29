@@ -9,7 +9,7 @@ module.exports = function (server) {
     });
 
     io.on('connection', (socket) => {
-        socket.rooms
+
         socket.on('connect_to', connectToRoom)
     });
 }
