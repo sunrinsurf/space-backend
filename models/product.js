@@ -21,16 +21,16 @@ const productSchema = mongoose.Schema({
     type: String,
     required: true
   },
-  image: {
-    data: {
-      type: Buffer,
-      required: true
-    },
-    type: {
-      type: String,
-      required: true
+  image: [
+    {
+      data: {
+        type: Buffer
+      },
+      type: {
+        type: String
+      }
     }
-  },
+  ],
   isEnded: {
     type: Boolean,
     required: true
@@ -57,4 +57,4 @@ const productSchema = mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model('transactionLog', productSchema);
+module.exports = mongoose.model('product', productSchema);

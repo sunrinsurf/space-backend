@@ -2,12 +2,9 @@ const mongoose = require('mongoose');
 
 const productSchema = mongoose.Schema({
   title: String,
+  postid: String,
   type: String,
-  content: String,
-  condition: String,
   owner: String,
-  image: [{ data: Buffer, type: String }],
-  postTime: Number
+  postTime: Date
 });
-
-module.exports = mongoose.model('product', productSchema);
+module.exports = mongoose.model('transactionLog', productSchema);

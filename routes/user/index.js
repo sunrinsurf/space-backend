@@ -56,11 +56,10 @@ router.post('/', async (req, res, next) => {
     ) {
       return throwError('올바른 휴대폰 인증 정보가 아닙니다.', 500);
     }
-    const verifyUser = await User.findOne()
-      .or([{ uid }, { phone }, { email }]);
+    const verifyUser = await User.findOne().or([{ uid }, { phone }, { email }]);
 
     if (verifyUser) {
-      return throwError("이미 존재하는 유저입니다.", 422);
+      return throwError('이미 존재하는 유저입니다.', 422);
     }
     const somethingStr = something || 'NULL';
     const user = new User({
