@@ -9,7 +9,6 @@ const util = require('util');
 const crypto = require('crypto');
 const throwError = require('../../lib/throwError');
 const User = require('../../models/user');
-const throwError = require('../../lib/throwError');
 
 router.use(bodyParser.json({ extended: true }));
 
