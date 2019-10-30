@@ -49,6 +49,7 @@ describe('SMS', function () {
 
         describe('Timeout handling', () => {
             let token;
+            const code = "123456"
             before((done) => {
                 request(app)
                     .post('/user/sms')
@@ -74,7 +75,11 @@ describe('SMS', function () {
                         message: '3분이 지난 코드입니다.',
                         status: 403
                     })
-                    .end(done);
+                    .end((err, res) => {
+                        console.log(res.body)
+                        if (err) return done(err);
+                        done();
+                    });
             })
         })
     });
