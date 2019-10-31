@@ -10,6 +10,7 @@ const throwError = require('../../lib/throwError');
 const phoneCert = require('../../lib/PhoneCertToken');
 const User = require('../../models/user');
 const auth = require('../../lib/middlewares/auth');
+const jwt = require('jsonwebtoken');
 
 require('dotenv').config();
 
@@ -135,6 +136,18 @@ router.get('/:id', auth.authroized, async (req, res, next) => {
       interest: result.interest
     };
     res.json(sendResult);
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.post('/modify', async (req, res, next) => {
+  try {
+    try {
+      jwt.verify(req.headers['x-access-token'], req.body.uid);
+    } catch (e) {
+      return throwError('토큰 검증에 실패했습니다.', 403);
+    }
   } catch (e) {
     next(e);
   }

@@ -122,7 +122,7 @@ router.get('/:post', async (req, res, next) => {
     const productId = req.params.post;
     let result;
     try {
-      result = await Product.findById(productId);
+      result = await Product.findOne({ _id: productId });
     } catch (e) {
       res.send(false);
     }
