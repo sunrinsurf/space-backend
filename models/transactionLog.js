@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 
-const productSchema = mongoose.Schema({
+const logSchema = mongoose.Schema({
   title: String,
   postid: String,
   type: String,
   owner: String,
   postTime: Date
 });
-module.exports = mongoose.model('transactionLog', productSchema);
+module.exports = mongoose.model('transactionlog', logSchema);

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const dataSchema = mongoose.Schema({
-  interestRank: [String]
+  interestRank: Array
 });
 
 module.exports = mongoose.model('data', dataSchema);
