@@ -7,6 +7,10 @@ const bodyParser = require('body-parser');
 const util = require('util');
 const throwError = require('../../lib/throwError');
 
+const jwt = require('jsonwebtoken');
+
+const auth = require('../../lib/middlewares/auth');
+
 const Product = require('../../models/product');
 const Chat = require('../../models/chat');
 const TransLog = require('../../models/transactionLog');
@@ -21,7 +25,8 @@ router.post('/', async (req, res, next) => {
       type,
       content,
       condition,
-      owner,
+      userid,
+      token,
       image,
       royaltyMethod,
       availableDate,
@@ -29,12 +34,21 @@ router.post('/', async (req, res, next) => {
       shareDuration
     } = req.body;
 
-    const product = new Product({
+    console.log(auth.req);
+    let owner;
+
+    try {
+      await jwt.verify(token, userid);
+    } catch (e) {
+      throwError('토큰 검증에 실패했습니다.', 403);
+    }
+
+    const product = await new Product({
       title,
       type,
       content,
       condition,
-      owner,
+      owner: userid,
       image,
       isEnded: false,
       participant: [],
@@ -102,13 +116,18 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.get('/:productId', async (req, res, next) => {
+router.get('/:post', async (req, res, next) => {
   //get specified product info
   try {
-    const productId = req.params.productId;
-    const result = await Product.findById(productId);
+    const productId = req.params.post;
+    let result;
+    try {
+      result = await Product.findById(productId);
+    } catch (e) {
+      res.send(false);
+    }
 
-    if (!result) return throwError('게시글이 존재하지 않습니다.', 404);
+    // if (!result) return throwError('게시글이 존재하지 않습니다.', 404);
 
     res.json(result);
   } catch (e) {
