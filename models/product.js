@@ -44,6 +44,9 @@ const productSchema = new mongoose.Schema({
     ref: 'user',
     required: true
   },
+  participant: {
+    type: [{ type: mongoose.SchemaTypes.ObjectId, ref: 'user' }]
+  },
   createdAt: {
     type: Date,
     default: Date.now
@@ -51,11 +54,12 @@ const productSchema = new mongoose.Schema({
 });
 
 productSchema.pre('validate', function(next) {
-  const { title, contents, timeToUse, images, royalty, category } = this;
+  const { title, contents, timeToUse, images, royalty, category, owner } = this;
 
   if (!title || !contents || !timeToUse || !images || !royalty || !category) {
     return throwError('필수 항목이 없습니다.', 400);
   }
+  this.participant = [owner];
   next();
 });
 const product = mongoose.model('product', productSchema);
