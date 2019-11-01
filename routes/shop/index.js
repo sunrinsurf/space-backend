@@ -24,7 +24,7 @@ router.post('/', auth.authroized, async (req, res, next) => {
       timeToUseDate,
       images,
       royalty,
-      categorys,
+      category,
       royaltyPrice
     } = req.body;
     const ownerId = req.user._id;
@@ -38,7 +38,7 @@ router.post('/', auth.authroized, async (req, res, next) => {
       timeToUseDate,
       images,
       royalty,
-      categorys,
+      category,
       royaltyPrice
     });
     await product.save();
@@ -54,23 +54,13 @@ router.post('/', auth.authroized, async (req, res, next) => {
 router.get('/', async (req, res, next) => {
   //get product info on MAINMENU generally
   try {
-    const interest = JSON.parse(req.query.interest);
-
-    const member = req.query.uid;
-    const dataCount = req.query.datacount;
+    const limit = req.query.limit;
 
     const product = await Product.find()
-      .where('type')
-      .in(interest)
-      .sort('-postTime')
-      .limit(parseInt(dataCount)); //interest 안에 있는 데이터 중 가장 최근순으로 dataCount 만큼의 데이터를 갖고옴 *테스트 아직 안함!
-
-    //console.log(product);
-    const chatData = await Chat.find({ member });
+      .sort('-createdAt')
+      .limit(parseInt(limit)); //interest 안에 있는 데이터 중 가장 최근순으로 dataCount 만큼의 데이터를 갖고옴 *테스트 아직 안함!
     if (!product)
       return throwError('조건에 일치하는 제품 데이터가 없습니다.', 404);
-    if (!chatData)
-      return throwError('조건에 일치하는 채팅 데이터가 없습니다.', 404);
 
     const result = {
       product,

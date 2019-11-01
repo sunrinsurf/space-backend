@@ -35,21 +35,25 @@ const productSchema = new mongoose.Schema({
   royaltyPrice: {
     type: Number
   },
-  categorys: {
-    type: [String],
+  category: {
+    type: String,
     required: true
   },
   owner: {
     type: mongoose.SchemaTypes.ObjectId,
     required: true
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
   }
 });
 
 productSchema.pre('validate', function(next) {
   console.log('pre', this);
-  const { title, contents, timeToUse, images, royalty, categorys } = this;
+  const { title, contents, timeToUse, images, royalty, category } = this;
 
-  if (!title || !contents || !timeToUse || !images || !royalty || !categorys) {
+  if (!title || !contents || !timeToUse || !images || !royalty || !category) {
     return throwError('필수 항목이 없습니다.', 400);
   }
   next();
