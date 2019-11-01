@@ -74,9 +74,14 @@ router.get('/', async (req, res, next) => {
       .limit(parseInt(limit)); //interest 안에 있는 데이터 중 가장 최근순으로 dataCount 만큼의 데이터를 갖고옴 *테스트 아직 안함!
     if (!product)
       return throwError('조건에 일치하는 제품 데이터가 없습니다.', 404);
-
+    const result = product
+      .map(d => d.toObject())
+      .map(d => ({
+        ...d,
+        images: d.images.map(img => img.data.toString('base64'))
+      }));
     res.json({
-      product
+      product: result
     });
   } catch (e) {
     next(e);
