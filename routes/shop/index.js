@@ -9,7 +9,7 @@ const auth = require('../../lib/middlewares/auth');
 
 const Product = require('../../models/product');
 const Chat = require('../../models/chat');
-const TransLog = require('../../models/transactionLog');
+//const TransLog = require('../../models/transactionLog');
 
 router.use(bodyParser.json({ extended: true }));
 
@@ -18,48 +18,33 @@ router.post('/', auth.authroized, async (req, res, next) => {
   try {
     const {
       title,
+      contents,
+      person,
+      timeToUse,
+      timeToUseDate,
+      images,
+      royalty,
       categorys,
-      content,
-      condition,
-      image,
-      royaltyMethod,
-      availableDate,
-      shareCount,
-      shareDuration
+      royaltyPrice
     } = req.body;
+    const ownerId = req.user._id;
 
     const product = new Product({
+      owner: ownerId,
       title,
+      contents,
+      person,
+      timeToUse,
+      timeToUseDate,
+      images,
+      royalty,
       categorys,
-      content,
-      condition,
-      owner: req.user._id,
-      image,
-      isEnded: false,
-      participant: [req.user._id],
-      royaltyMethod,
-      availableDate,
-      shareCount,
-      shareDuration
+      royaltyPrice
     });
-
-    try {
-      const timeNow = Date.now();
-
-      const queryRes = await product.save();
-      const transLog = new TransLog({
-        title,
-        postid: queryRes.id,
-        categorys,
-        owner: req.user._id,
-        postTime: timeNow
-      });
-      await transLog.save();
-      res.send(true);
-    } catch (e) {
-      console.error(e);
-      return throwError('데이터 저장에 실패했습니다', 500);
-    }
+    await product.save();
+    res.json({
+      success: true
+    });
   } catch (e) {
     next(e);
   }
