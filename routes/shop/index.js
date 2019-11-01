@@ -66,7 +66,6 @@ router.get('/', async (req, res, next) => {
       'timeToUseDate',
       'royalty',
       'royaltyPrice',
-      'images',
       'participant'
     ])
       .populate('owner', ['nickname'])
@@ -74,20 +73,31 @@ router.get('/', async (req, res, next) => {
       .limit(parseInt(limit)); //interest 안에 있는 데이터 중 가장 최근순으로 dataCount 만큼의 데이터를 갖고옴 *테스트 아직 안함!
     if (!product)
       return throwError('조건에 일치하는 제품 데이터가 없습니다.', 404);
-    const result = product
-      .map(d => d.toObject())
-      .map(d => ({
-        ...d,
-        images: d.images.map(img => img.data.toString('base64'))
-      }));
     res.json({
-      product: result
+      product
     });
   } catch (e) {
     next(e);
   }
 });
+router.get('/:product/images/:idx', async (req, res, next) => {
+  try {
+    const product = await Product.findById(req.params.product);
+    if (!product) {
+      return throwError('상품이 없습니다.', 404);
+    }
+    const idx = parseInt(req.params.idx, 10);
+    if (product.images.length <= idx) {
+      return throwError('이미지가 없습니다.', 404);
+    }
 
+    const image = product.images[idx];
+    res.type(image.type);
+    res.send(image.data);
+  } catch (e) {
+    next(e);
+  }
+});
 router.get('/:post', async (req, res, next) => {
   //get specified product info
   try {
