@@ -45,7 +45,8 @@ const productSchema = new mongoose.Schema({
   }
 });
 
-productSchema.pre('save', function() {
+productSchema.pre('validate', function(next) {
+  console.log('pre', this);
   const { title, contents, timeToUse, images, royalty, categorys } = this;
 
   if (!title || !contents || !timeToUse || !images || !royalty || !categorys) {
