@@ -54,19 +54,29 @@ router.post('/', auth.authroized, async (req, res, next) => {
 router.get('/', async (req, res, next) => {
   //get product info on MAINMENU generally
   try {
-    const limit = req.query.limit;
+    const limit = req.query.limit || 10;
 
-    const product = await Product.find()
+    const product = await Product.find({}, [
+      'owner',
+      'title',
+      '_id',
+      'createdAt',
+      'category',
+      'timeToUse',
+      'timeToUseDate',
+      'royalty',
+      'royaltyPrice',
+      'images'
+    ])
+      .populate('owner', ['nickname'])
       .sort('-createdAt')
       .limit(parseInt(limit)); //interest 안에 있는 데이터 중 가장 최근순으로 dataCount 만큼의 데이터를 갖고옴 *테스트 아직 안함!
     if (!product)
       return throwError('조건에 일치하는 제품 데이터가 없습니다.', 404);
 
-    const result = {
-      product,
-      chatInfo: chatData
-    };
-    res.send(result);
+    res.json({
+      product
+    });
   } catch (e) {
     next(e);
   }
