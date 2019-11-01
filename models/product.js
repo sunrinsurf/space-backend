@@ -18,7 +18,7 @@ const productSchema = mongoose.Schema({
     required: true
   },
   owner: {
-    type: String,
+    type: mongoose.SchemaTypes.ObjectId,
     required: true
   },
   image: [
@@ -36,7 +36,7 @@ const productSchema = mongoose.Schema({
     required: true
   },
   participant: {
-    type: [String],
+    type: [mongoose.SchemaTypes.ObjectId],
     required: true
   },
   royaltyMethod: {

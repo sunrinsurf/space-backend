@@ -38,7 +38,8 @@ router.post('/', async (req, res, next) => {
     }
     const payload = {
       userId: user.uid,
-      username: user.name
+      username: user.name,
+      _id: user._id
     };
     const result = jwt.sign(payload, settings.TOKEN_KEY || 'jwt', {
       expiresIn: tokenExpireTime,
