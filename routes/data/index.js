@@ -1,12 +1,10 @@
 // /user/index.js
 
 const express = require('express');
-const util = require('util');
 
 const router = express.Router();
 
 const bodyParser = require('body-parser');
-const throwError = require('../../lib/throwError');
 const analyzer = require('../../lib/middlewares/analyzeInterest');
 const Data = require('../../models/data');
 
