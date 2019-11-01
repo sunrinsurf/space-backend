@@ -50,7 +50,6 @@ const productSchema = new mongoose.Schema({
 });
 
 productSchema.pre('validate', function(next) {
-  console.log('pre', this);
   const { title, contents, timeToUse, images, royalty, category } = this;
 
   if (!title || !contents || !timeToUse || !images || !royalty || !category) {
