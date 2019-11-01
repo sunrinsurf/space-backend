@@ -43,7 +43,8 @@ router.post('/', auth.authroized, async (req, res, next) => {
     });
     await product.save();
     res.json({
-      success: true
+      success: true,
+      productId: product._id
     });
   } catch (e) {
     next(e);
