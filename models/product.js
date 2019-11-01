@@ -5,8 +5,8 @@ const productSchema = mongoose.Schema({
     type: String,
     required: true
   },
-  type: {
-    type: String,
+  categorys: {
+    type: [String],
     required: true
   },
   content: {

@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const logSchema = mongoose.Schema({
   title: String,
   postid: String,
-  type: String,
+  categorys: [String],
   owner: String,
   postTime: Date
 });

@@ -18,7 +18,7 @@ router.post('/', auth.authroized, async (req, res, next) => {
   try {
     const {
       title,
-      type,
+      categorys,
       content,
       condition,
       image,
@@ -28,10 +28,9 @@ router.post('/', auth.authroized, async (req, res, next) => {
       shareDuration
     } = req.body;
 
-    console.log(req.user._id);
     const product = new Product({
       title,
-      type,
+      categorys,
       content,
       condition,
       owner: req.user._id,
@@ -51,7 +50,7 @@ router.post('/', auth.authroized, async (req, res, next) => {
       const transLog = new TransLog({
         title,
         postid: queryRes.id,
-        type,
+        categorys,
         owner: req.user._id,
         postTime: timeNow
       });
