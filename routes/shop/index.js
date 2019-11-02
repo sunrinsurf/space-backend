@@ -29,6 +29,7 @@ router.post('/', auth.authroized, async (req, res, next) => {
     } = req.body;
     const ownerId = req.user._id;
 
+    console.log(images);
     const product = new Product({
       owner: ownerId,
       title,
@@ -36,7 +37,10 @@ router.post('/', auth.authroized, async (req, res, next) => {
       person,
       timeToUse,
       timeToUseDate,
-      images,
+      images: images.map(img => ({
+        ...img,
+        data: Buffer.from(img.data, 'base64')
+      })),
       royalty,
       category,
       royaltyPrice
@@ -98,20 +102,15 @@ router.get('/:product/images/:idx', async (req, res, next) => {
     next(e);
   }
 });
-router.get('/:post', async (req, res, next) => {
+router.get('/:product', async (req, res, next) => {
   //get specified product info
   try {
-    const productId = req.params.post;
-    let result;
-    try {
-      result = await Product.findOne({ _id: productId });
-    } catch (e) {
-      res.send(false);
-    }
-
-    // if (!result) return throwError('게시글이 존재하지 않습니다.', 404);
-
-    res.json(result);
+    const productId = req.params.product;
+    const product = await Product.findOne({ _id: productId }).populate(
+      'owner',
+      ['nickname']
+    );
+    res.json({ product });
   } catch (e) {
     next(e);
   }

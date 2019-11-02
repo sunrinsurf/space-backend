@@ -59,7 +59,6 @@ productSchema.pre('validate', function(next) {
   if (!title || !contents || !timeToUse || !images || !royalty || !category) {
     return throwError('필수 항목이 없습니다.', 400);
   }
-  this.participant = [owner];
   next();
 });
 const product = mongoose.model('product', productSchema);
