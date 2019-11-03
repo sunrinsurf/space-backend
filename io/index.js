@@ -16,6 +16,12 @@ module.exports = function(server) {
           room.removeUser(chat.product, socket.id);
           socket.broadcast.emit('room_data', room.getData(chat.product));
         });
+        socket.on('chat', message => {
+          socket.broadcast.emit('chat', {
+            message,
+            nickname: room.getUsername(socket.id)
+          });
+        });
       });
     }
   });

@@ -1,10 +1,12 @@
-let room = {};
+const room = {};
+const usernames = {};
 
-exports.addUser = (product, id, userId) => {
+exports.addUser = (product, id, userId, username) => {
   if (!room[product]) {
     room[product] = {};
   }
   room[product][id] = userId;
+  usernames[id] = username;
 };
 exports.getData = product => {
   if (!room[product]) {
@@ -18,9 +20,13 @@ exports.getData = product => {
 
   return data;
 };
+exports.getUsername = id => {
+  return usernames[id];
+};
 exports.removeUser = (product, socketId) => {
   if (!room[product]) {
     room[product] = {};
   }
   delete room[product][socketId];
+  delete usernames[socketId];
 };
