@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const throwError = require('../lib/throwError');
+const Chat = require('./chat');
 
 const productSchema = new mongoose.Schema({
   title: {
@@ -45,7 +46,8 @@ const productSchema = new mongoose.Schema({
     required: true
   },
   participant: {
-    type: [{ type: mongoose.SchemaTypes.ObjectId, ref: 'user' }]
+    type: [{ type: mongoose.SchemaTypes.ObjectId, ref: 'user', unique: true }],
+    default: []
   },
   createdAt: {
     type: Date,
@@ -60,6 +62,14 @@ productSchema.pre('validate', function(next) {
     return throwError('필수 항목이 없습니다.', 400);
   }
   next();
+});
+productSchema.post('save', function(doc, next) {
+  const chat = new Chat({
+    product: doc._id
+  });
+  chat.save(() => {
+    next();
+  });
 });
 const product = mongoose.model('product', productSchema);
 module.exports = product;

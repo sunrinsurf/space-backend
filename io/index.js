@@ -1,15 +1,22 @@
 const socketio = require('socket.io');
-const verifyToken = require('../lib/verifyToken');
+const Chat = require('../models/chat');
+const connect_to = require('./connect_to');
+const room = require('./room');
 
-const connectToRoom = require('./connectToRoom');
+module.exports = function(server) {
+  const io = socketio(server);
 
-module.exports = function (server) {
-    const io = socketio(server, {
-        path: '/chat',
-    });
+  Chat.find().then(data => {
+    for (const chat of data) {
+      const nsp = io.of(`/${chat.product}`);
 
-    io.on('connection', (socket) => {
-
-        socket.on('connect_to', connectToRoom)
-    });
-}
+      nsp.on('connection', socket => {
+        socket.on('connect_to', connect_to(socket, chat.product));
+        socket.on('disconnect', () => {
+          room.removeUser(chat.product, socket.id);
+          socket.broadcast.emit('room_data', room.getData(chat.product));
+        });
+      });
+    }
+  });
+};

@@ -110,10 +110,40 @@ router.get('/:product', async (req, res, next) => {
       'owner',
       ['nickname']
     );
+    if (!product) {
+      return throwError('존재하지 않는 상품입니다.', 404);
+    }
     res.json({ product });
   } catch (e) {
     next(e);
   }
 });
+router.post('/:product/invite', auth.authroized, async (req, res, next) => {
+  try {
+    const user = req.user._id;
+    const product = await Product.findById(req.params.product);
 
+    if (!product) {
+      return throwError('존재하지 않는 상품입니다.', 404);
+    }
+    if (product.owner === user) {
+      return throwError('자신의 상품에는 참여하실 수 없습니다.', 400);
+    }
+
+    for (const p of product.participant) {
+      console.log(user, p);
+      if (user.toString() === p.toString())
+        return throwError('이미 참여 중인 상품입니다.', 422);
+    }
+
+    product.participant.push(user);
+    await product.save();
+
+    res.json({
+      success: true
+    });
+  } catch (e) {
+    next(e);
+  }
+});
 module.exports = router;
