@@ -1,21 +1,26 @@
 const verifyToken = require('../lib/verifyToken');
 const room = require('./room');
 const User = require('../models/user');
+const Chat = require('../models/chat');
 
-module.exports = (socket, product) => {
-  return token => {
-    let user;
+module.exports = socket => {
+  return (token, chatId) => {
+    let userdata;
     try {
-      user = verifyToken(token);
+      userdata = verifyToken(token);
     } catch (e) {
       return socket.emit('error', '인증에 실패했습니다.');
     }
-    User.findById(user._id, ['nickname']).then(user => {
-      room.addUser(product, socket.id, user._id, user.nickname);
-      const data = room.getData(product);
+    (async () => {
+      const chat = await Chat.findById(chatId);
 
-      socket.emit('room_data', data);
-      socket.broadcast.emit('room_data', data);
+      if (!chat) {
+        return socket.emit('error', '없는 채팅방입니다.');
+      }
+      const user = await User.findById(userdata._id, ['nickname']);
+      room.addUser(socket, chat._id, user._id, user.nickname);
+    })().catch(e => {
+      throw e;
     });
   };
 };
