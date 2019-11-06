@@ -1,5 +1,0 @@
-{
-  "PHONE_KEY": "phonetokenkey",
-  "PHONE_CERT_KEY": "certtokenkey",
-  "TOKEN_KEY": "JWT_Token"
-}
