@@ -23,15 +23,16 @@ class User {
   }
 
   async init() {
-    const chatLogs = await ChatLog.find({
+    const _chatLogs = await ChatLog.find({
       chat: this.chatId,
       time: {
         $gt: Date.now() - 1000 * 60 * 60 * 24 * 7 // 최근 7일
       }
     })
+      .sort('-time')
       .populate('by', ['nickname'])
       .limit(100);
-
+    const chatLogs = _chatLogs.sort();
     const data = {};
     Object.values(room.users).forEach(v => {
       data[v.userId] = true;
