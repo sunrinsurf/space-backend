@@ -1,5 +1,0 @@
-{
-  "name": "space-backend",
-  "script": "index.js",
-  "env": "production"
-}
