@@ -9,6 +9,7 @@ const bodyParser = require('body-parser');
 const throwError = require('../../lib/throwError');
 const phoneCert = require('../../lib/PhoneCertToken');
 const User = require('../../models/user');
+const Product = require('../../models/product');
 const auth = require('../../lib/middlewares/auth');
 const jwt = require('jsonwebtoken');
 
@@ -127,13 +128,23 @@ router.get('/:id', auth.authroized, async (req, res, next) => {
     if (!result) {
       return throwError('ID가 존재하지 않습니다.', 400);
     }
+    const invitedProducts = await Product.find({
+      participant: {
+        $in: [result._id]
+      }
+    });
+    const createdProducts = await Product.find({
+      owner: result._id
+    });
     const sendResult = {
       uid: result.uid,
       nickname: result.nickname,
       email: result.email,
       phone: result.phone,
       address: result.address,
-      interest: result.interest
+      interest: result.interest,
+      invitedProducts,
+      createdProducts
     };
     res.json(sendResult);
   } catch (e) {
