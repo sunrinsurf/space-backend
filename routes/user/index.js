@@ -151,19 +151,28 @@ router.get('/:id', auth.authroized, async (req, res, next) => {
     next(e);
   }
 });
+router.get('/:id/interest', auth.authroized, async (req, res, next) => {
+  try {
+    const user = await User.findOne({ uid: req.params.id }, ['interest']);
+
+    if (!user) {
+      return throwError('유저를 찾을 수 없습니다.', 404);
+    }
+
+    res.json({ categorys: user.interest });
+  } catch (e) {
+    next(e);
+  }
+});
 
 router.post('/modify', async (req, res, next) => {
   try {
-
-    try { //토큰 검증
+    try {
+      //토큰 검증
       jwt.verify(req.headers['x-access-token'], req.body.uid);
     } catch (e) {
       return throwError('토큰 검증에 실패했습니다.', 403);
     }
-
-    
-    
-
   } catch (e) {
     next(e);
   }
