@@ -12,6 +12,7 @@ router.use(bodyParser.json());
 
 router.get('/', async (req, res, next) => {
   try {
+
     const rawResult = await Data.findOne({ _id: '5db8e6b6042ec77665f03b5f' });
 
     const result = { interestRank: rawResult.interestRank };
@@ -21,9 +22,11 @@ router.get('/', async (req, res, next) => {
   }
 });
 
+//analyze 
+
 router.get('/analyze', (req, res, next) => {
   try {
-    analyzer();
+    analyzer(); //1주일에 한번정도 analyze 돌려야함
 
     res.send(true);
   } catch (e) {

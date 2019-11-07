@@ -74,7 +74,7 @@ router.get('/', async (req, res, next) => {
     ])
       .populate('owner', ['nickname'])
       .sort('-createdAt')
-      .limit(parseInt(limit)); //interest 안에 있는 데이터 중 가장 최근순으로 dataCount 만큼의 데이터를 갖고옴 *테스트 아직 안함!
+      .limit(parseInt(limit)); //interest 안에 있는 데이터 중 가장 최근순으로 dataCount 만큼의 데이터를 갖고옴
     if (!product)
       return throwError('조건에 일치하는 제품 데이터가 없습니다.', 404);
     res.json({

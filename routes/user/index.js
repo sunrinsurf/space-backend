@@ -154,11 +154,16 @@ router.get('/:id', auth.authroized, async (req, res, next) => {
 
 router.post('/modify', async (req, res, next) => {
   try {
-    try {
+
+    try { //토큰 검증
       jwt.verify(req.headers['x-access-token'], req.body.uid);
     } catch (e) {
       return throwError('토큰 검증에 실패했습니다.', 403);
     }
+
+    
+    
+
   } catch (e) {
     next(e);
   }
