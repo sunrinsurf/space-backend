@@ -14,7 +14,6 @@ class User {
     this.userId = userId;
     this.nickname = userNickname;
     this.socket = socket;
-    console.log(socket.id);
     this.socket.join(this.chatId);
     this.socket.on('disconnect', this.disconnect.bind(this));
     this.socket.on('chat', this.chat.bind(this));
