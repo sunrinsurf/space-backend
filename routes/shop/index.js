@@ -42,6 +42,7 @@ router.post('/', auth.authroized, async (req, res, next) => {
       })),
       royalty,
       category,
+      participant: [],
       royaltyPrice
     });
     await product.save();
