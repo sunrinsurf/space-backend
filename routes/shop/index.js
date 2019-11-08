@@ -8,7 +8,6 @@ const throwError = require('../../lib/throwError');
 const auth = require('../../lib/middlewares/auth');
 
 const Product = require('../../models/product');
-const Chat = require('../../models/chat');
 //const TransLog = require('../../models/transactionLog');
 
 router.use(bodyParser.json({ extended: true }));
