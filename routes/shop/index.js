@@ -27,8 +27,6 @@ router.post('/', auth.authroized, async (req, res, next) => {
       royaltyPrice
     } = req.body;
     const ownerId = req.user._id;
-
-    console.log(images);
     const product = new Product({
       owner: ownerId,
       title,
@@ -130,7 +128,6 @@ router.post('/:product/invite', auth.authroized, async (req, res, next) => {
     }
 
     for (const p of product.participant) {
-      console.log(user, p);
       if (user.toString() === p.toString())
         return throwError('이미 참여 중인 상품입니다.', 422);
     }

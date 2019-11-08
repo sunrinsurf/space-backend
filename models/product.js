@@ -46,7 +46,7 @@ const productSchema = new mongoose.Schema({
     required: true
   },
   participant: {
-    type: [{ type: mongoose.SchemaTypes.ObjectId, ref: 'user', unique: true }],
+    type: [{ type: mongoose.SchemaTypes.ObjectId, ref: 'user' }],
     default: []
   },
   createdAt: {
