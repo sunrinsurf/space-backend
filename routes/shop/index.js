@@ -9,6 +9,7 @@ const auth = require('../../lib/middlewares/auth');
 
 const Product = require('../../models/product');
 const AnalyzeLog = require('../../models/analyzeLog');
+const User = require('../../models/user');
 //const TransLog = require('../../models/transactionLog');
 
 router.use(bodyParser.json({ extended: true }));
@@ -69,22 +70,45 @@ router.get('/', async (req, res, next) => {
   //get product info on MAINMENU generally
   try {
     const limit = req.query.limit || 10;
+    let product;
 
-    const product = await Product.find({}, [
-      'owner',
-      'title',
-      '_id',
-      'createdAt',
-      'category',
-      'timeToUse',
-      'timeToUseDate',
-      'royalty',
-      'royaltyPrice',
-      'participant'
-    ])
-      .populate('owner', ['nickname'])
-      .sort('-createdAt')
-      .limit(parseInt(limit)); //interest 안에 있는 데이터 중 가장 최근순으로 dataCount 만큼의 데이터를 갖고옴
+    const userData = User.findOne({ uid: req.query.uid });
+    if (userData) {
+      //유저정보가 있을때
+      product = await Product.find({}, [
+        'owner',
+        'title',
+        '_id',
+        'createdAt',
+        'category',
+        'timeToUse',
+        'timeToUseDate',
+        'royalty',
+        'royaltyPrice',
+        'participant'
+      ])
+        .in('category', userData.interest)
+        .populate('owner', ['nickname'])
+        .sort('-createdAt')
+        .limit(parseInt(limit)); //interest 안에 있는 데이터 중 가장 최근순으로 dataCount 만큼의 데이터를 갖고옴
+    } else {
+      //유저 정보가 없을때
+      product = await Product.find({}, [
+        'owner',
+        'title',
+        '_id',
+        'createdAt',
+        'category',
+        'timeToUse',
+        'timeToUseDate',
+        'royalty',
+        'royaltyPrice',
+        'participant'
+      ])
+        .populate('owner', ['nickname'])
+        .sort('-createdAt')
+        .limit(parseInt(limit)); //interest 안에 있는 데이터 중 가장 최근순으로 dataCount 만큼의 데이터를 갖고옴
+    }
     if (!product)
       return throwError('조건에 일치하는 제품 데이터가 없습니다.', 404);
 
