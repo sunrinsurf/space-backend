@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema();
+const Model = mongoose.model();
 
 const analyzeSchema = Schema({
   user: {
@@ -19,3 +20,5 @@ const analyzeSchema = Schema({
     require: true
   }
 });
+
+module.exports = Model('analyzelog', analyzeSchema);
