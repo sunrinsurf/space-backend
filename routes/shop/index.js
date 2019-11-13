@@ -8,6 +8,7 @@ const throwError = require('../../lib/throwError');
 const auth = require('../../lib/middlewares/auth');
 
 const Product = require('../../models/product');
+const AnalyzeLog = require('../../models/analyzeLog');
 //const TransLog = require('../../models/transactionLog');
 
 router.use(bodyParser.json({ extended: true }));
@@ -26,6 +27,7 @@ router.post('/', auth.authroized, async (req, res, next) => {
       category,
       royaltyPrice
     } = req.body;
+
     const ownerId = req.user._id;
     const product = new Product({
       owner: ownerId,
@@ -44,6 +46,16 @@ router.post('/', auth.authroized, async (req, res, next) => {
       royaltyPrice
     });
     await product.save();
+
+    const analyzeRawData = new AnalyzeLog({
+      user: ownerId,
+      date: Date.now(),
+      category: category,
+      accessType: 'arrange'
+    });
+
+    await analyzeRawData.save();
+
     res.json({
       success: true,
       productId: product._id
@@ -75,6 +87,7 @@ router.get('/', async (req, res, next) => {
       .limit(parseInt(limit)); //interest 안에 있는 데이터 중 가장 최근순으로 dataCount 만큼의 데이터를 갖고옴
     if (!product)
       return throwError('조건에 일치하는 제품 데이터가 없습니다.', 404);
+
     res.json({
       product
     });
@@ -82,6 +95,7 @@ router.get('/', async (req, res, next) => {
     next(e);
   }
 });
+
 router.get('/:product/images/:idx', async (req, res, next) => {
   try {
     const product = await Product.findById(req.params.product);
@@ -100,6 +114,7 @@ router.get('/:product/images/:idx', async (req, res, next) => {
     next(e);
   }
 });
+
 router.get('/:product', async (req, res, next) => {
   //get specified product info
   try {
@@ -108,14 +123,23 @@ router.get('/:product', async (req, res, next) => {
       'owner',
       ['nickname']
     );
-    if (!product) {
-      return throwError('존재하지 않는 상품입니다.', 404);
-    }
+    if (!product) return throwError('존재하지 않는 상품입니다.', 404);
+
+    const analyzeRawData = new AnalyzeLog({
+      user: req.query._id || 'NOT_DEFINED',
+      date: Date.now(),
+      category: product.category || 'NOT_DEFINED',
+      accessType: 'view'
+    });
+
+    analyzeRawData.save();
+
     res.json({ product });
   } catch (e) {
     next(e);
   }
 });
+
 router.post('/:product/invite', auth.authroized, async (req, res, next) => {
   try {
     const user = req.user._id;
@@ -135,6 +159,15 @@ router.post('/:product/invite', auth.authroized, async (req, res, next) => {
 
     product.participant.push(user);
     await product.save();
+
+    const analyzeRawData = new AnalyzeLog({
+      user: user || 'NOT_DEFINED',
+      date: Date.now(),
+      category: product.category || 'NOT_DEFINED',
+      accessType: 'participate'
+    });
+
+    analyzeRawData.save();
 
     res.json({
       success: true
