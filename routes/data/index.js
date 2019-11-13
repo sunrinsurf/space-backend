@@ -6,7 +6,6 @@ const router = express.Router();
 
 const bodyParser = require('body-parser');
 const analyzer = require('../../lib/middlewares/analyzeInterest');
-const PersonalAnalyzer = require('../../lib/middlewares/analyzePersonalData');
 const Data = require('../../models/data');
 const throwError = require('../../lib/throwError');
 
@@ -39,7 +38,7 @@ router.get('/:id/analyze', (req, res, next) => {
   try {
     const userid = req.params.id;
     if (!userid) throwError('분석할 아이디가 주어지지 않았습니다.', 400);
-    PersonalAnalyzer(userid);
+    analyzer(userid);
     const sendInfo = userid + 'has been successfully analyzed.';
     res.send(sendInfo);
   } catch (e) {
