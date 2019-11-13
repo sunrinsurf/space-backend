@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema();
-const Model = mongoose.model();
 
-const analyzeSchema = Schema({
+const analyzeSchema = mongoose.Schema({
   user: {
     type: String,
     require: true
@@ -21,4 +19,4 @@ const analyzeSchema = Schema({
   }
 });
 
-module.exports = Model('analyzelog', analyzeSchema);
+module.exports = mongoose.model('analyzelog', analyzeSchema);

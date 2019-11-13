@@ -26,7 +26,7 @@ router.get('/', async (req, res, next) => {
 
 router.get('/analyze', (req, res, next) => {
   try {
-    analyzer(); //1주일에 한번정도 analyze 돌려야함
+    analyzer(); //주기적으로 analyze 를 돌려줘야됨
 
     res.send(true);
   } catch (e) {
