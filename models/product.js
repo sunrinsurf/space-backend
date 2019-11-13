@@ -56,7 +56,7 @@ const productSchema = new mongoose.Schema({
 });
 
 productSchema.pre('validate', function(next) {
-  const { title, contents, timeToUse, images, royalty, category, owner } = this;
+  const { title, contents, timeToUse, images, royalty, category } = this;
 
   if (!title || !contents || !timeToUse || !images || !royalty || !category) {
     return throwError('필수 항목이 없습니다.', 400);
