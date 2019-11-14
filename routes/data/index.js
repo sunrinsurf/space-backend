@@ -38,8 +38,12 @@ router.get('/:id/analyze', (req, res, next) => {
   try {
     const userid = req.params.id;
     if (!userid) throwError('분석할 아이디가 주어지지 않았습니다.', 400);
-    analyzer(userid);
-    const sendInfo = userid + 'has been successfully analyzed.';
+    let sendInfo;
+    if (analyzer(userid)) {
+      sendInfo = userid + ' has been successfully analyzed.';
+    } else {
+      throwError('데이터 애널라이징에 실패했습니다', 500);
+    }
     res.send(sendInfo);
   } catch (e) {
     next(e);
