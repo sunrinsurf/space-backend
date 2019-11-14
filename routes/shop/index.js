@@ -72,7 +72,7 @@ router.get('/', async (req, res, next) => {
     const limit = req.query.limit || 10;
     let product;
 
-    const userData = User.findOne({ uid: req.query.uid });
+    const userData = User.findOne({ _id: req.query._id });
     if (userData) {
       //유저정보가 있을때
       product = await Product.find({}, [
@@ -143,6 +143,8 @@ router.get('/:product', async (req, res, next) => {
   //get specified product info
   try {
     const productId = req.params.product;
+    const userId = req.query._id;
+
     const product = await Product.findOne({ _id: productId }).populate(
       'owner',
       ['nickname']
@@ -150,7 +152,7 @@ router.get('/:product', async (req, res, next) => {
     if (!product) return throwError('존재하지 않는 상품입니다.', 404);
 
     const analyzeRawData = new AnalyzeLog({
-      user: req.query._id || 'NOT_DEFINED',
+      user: userId || 'NOT_DEFINED',
       date: Date.now(),
       category: product.category || 'NOT_DEFINED',
       accessType: 'view'
