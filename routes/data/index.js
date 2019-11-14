@@ -29,6 +29,7 @@ router.get('/', async (req, res, next) => {
 
 router.get('/analyze', (req, res, next) => {
   try {
+    //수동적으로 돌려주는거임
     analyzer(); //주기적으로 analyze 를 돌려줘야됨
 
     res.send(true);
