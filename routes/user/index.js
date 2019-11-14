@@ -63,7 +63,7 @@ router.post('/', async (req, res, next) => {
     if (verifyUser) {
       return throwError('이미 존재하는 유저입니다.', 422);
     }
-    const somethingStr = something || 'NULL';
+
     const user = new User({
       // making an object for insertion
       uid,
@@ -74,7 +74,7 @@ router.post('/', async (req, res, next) => {
       phone,
       address,
       interest,
-      something: somethingStr
+      something: something || 'NULL'
     });
     try {
       await user.save();
