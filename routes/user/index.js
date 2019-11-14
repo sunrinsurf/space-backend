@@ -100,20 +100,25 @@ router.post('/overlap', async (req, res, next) => {
     if (!type || content === undefined) {
       return throwError('필수 항목이 필요합니다.', 400);
     }
-    const query = {};
-    switch (type) {
-      case 'id':
-        query.uid = content;
-        break;
-      case 'phone':
-        query.phone = content;
-        break;
-      case 'email':
-        query.email = content;
-        break;
-      default:
-        throwError('비교할 수 있는 대상이 아닙니다.', 400);
+    const typeArray = ['id', 'phone', 'email'];
+
+    if (typeArray.indexOf(type) !== -1) {
+      return throwError('입력 값이 잘못되었습니다.', 400);
     }
+    const query = { [type]: content };
+    // switch (type) {
+    //   case 'id':
+    //     query.uid = content;
+    //     break;
+    //   case 'phone':
+    //     query.phone = content;
+    //     break;
+    //   case 'email':
+    //     query.email = content;
+    //     break;
+    //   default:
+    //     throwError('비교할 수 있는 대상이 아닙니다.', 400);
+    // }
     const user = await User.findOne(query);
     res.json({ overlap: !!user });
   } catch (e) {
@@ -173,7 +178,7 @@ router.post('/modify', async (req, res, next) => {
   try {
     try {
       //토큰 검증
-      jwt.verify(req.headers['x-access-token'], req.body.uid);
+      jwt.verify(req.headers['x-access-token'], process.env.TOKEN_KEY || 'jwt');
     } catch (e) {
       return throwError('토큰 검증에 실패했습니다.', 403);
     }
