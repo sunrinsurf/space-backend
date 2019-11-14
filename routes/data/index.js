@@ -13,7 +13,9 @@ router.use(bodyParser.json());
 
 router.get('/', async (req, res, next) => {
   try {
-    const rawResult = await Data.findOne({ _id: '5db8e6b6042ec77665f03b5f' });
+    const rawResult = await Data.find()
+      .sort('-date')
+      .limit(1);
 
     const result = { interestRank: rawResult.interestRank };
     res.json(result);
