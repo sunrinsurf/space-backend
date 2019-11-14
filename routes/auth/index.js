@@ -41,7 +41,7 @@ router.post('/', async (req, res, next) => {
       username: user.name,
       _id: user._id
     };
-    const result = jwt.sign(payload, settings.TOKEN_KEY || 'jwt', {
+    const result = jwt.sign(payload, process.env.TOKEN_KEY || 'jwt', {
       expiresIn: tokenExpireTime,
       issuer: 'surfspace.me'
     });
