@@ -9,6 +9,7 @@ const util = require('util');
 const crypto = require('crypto');
 const throwError = require('../../lib/throwError');
 const User = require('../../models/user');
+const analyzer = require('../../lib/middlewares/analyzeInterest');
 
 router.use(bodyParser.json({ extended: true }));
 
@@ -45,6 +46,9 @@ router.post('/', async (req, res, next) => {
       expiresIn: tokenExpireTime,
       issuer: 'surfspace.me'
     });
+    if (process.env.PERSONAL_ANALYZE_ONLOGIN_ISENABLED) {
+      analyzer(user.uid);
+    }
     res.status(201).json({ token: result });
   } catch (e) {
     next(e);
