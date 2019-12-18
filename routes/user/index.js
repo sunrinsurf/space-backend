@@ -96,7 +96,7 @@ router.post('/', async (req, res, next) => {
 
 router.post('/overlap', async (req, res, next) => {
   try {
-    const { type, content } = req.body;
+    let { type, content } = req.body;
     if (!type || content === undefined) {
       return throwError('필수 항목이 필요합니다.', 400);
     }
@@ -105,6 +105,9 @@ router.post('/overlap', async (req, res, next) => {
     if (typeArray.indexOf(type) === -1) {
       console.log(type);
       return throwError('입력 값이 잘못되었습니다.', 400);
+    }
+    if (type === 'id') {
+      type = 'uid';
     }
     const query = { [type]: content };
     const user = await User.findOne(query);
