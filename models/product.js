@@ -25,7 +25,8 @@ const productSchema = new mongoose.Schema({
     default: null
   },
   images: {
-    type: [{ data: { type: Buffer }, type: { type: String } }],
+    type: [mongoose.SchemaTypes.ObjectId],
+    ref: 'image',
     required: true
   },
   royalty: {

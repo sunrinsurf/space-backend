@@ -28,7 +28,6 @@ router.post('/', auth.authroized, upload.any(), (req, res, next) => {
   if (!req.files.length) {
     return throwError('파일이 업로드되지 않았습니다. 요청을 확인하세요.', 400);
   }
-  console.log(req.files);
   Promise.all(
     req.files.map(data =>
       (async () => {

@@ -37,10 +37,7 @@ router.post('/', auth.authroized, async (req, res, next) => {
       person,
       timeToUse,
       timeToUseDate,
-      images: images.map(img => ({
-        ...img,
-        data: Buffer.from(img.data, 'base64')
-      })),
+      images,
       royalty,
       category,
       participant: [],
@@ -72,7 +69,7 @@ router.get('/', async (req, res, next) => {
     const limit = req.query.limit || 10;
     let product;
 
-    const userData = User.findOne({ _id: req.query._id });
+    const userData = await User.findOne({ _id: req.query._id });
     if (userData) {
       //유저정보가 있을때
       product = await Product.find({}, [
@@ -85,7 +82,8 @@ router.get('/', async (req, res, next) => {
         'timeToUseDate',
         'royalty',
         'royaltyPrice',
-        'participant'
+        'participant',
+        'images'
       ])
         .in('category', userData.interest)
         .populate('owner', ['nickname'])
@@ -103,7 +101,8 @@ router.get('/', async (req, res, next) => {
         'timeToUseDate',
         'royalty',
         'royaltyPrice',
-        'participant'
+        'participant',
+        'images'
       ])
         .populate('owner', ['nickname'])
         .sort('-createdAt')
