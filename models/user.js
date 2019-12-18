@@ -32,7 +32,23 @@ const userSchema = new mongoose.Schema({
   },
   interest: {
     type: [String],
+    default: []
+  },
+  lastLogin: {
+    type: Date,
+    default: 0
+  },
+  staticInterest: {
+    type: [String],
     required: true
+  },
+  regdate: {
+    type: Date,
+    required: true
+  },
+  tags: {
+    type: [String],
+    default: []
   }
 });
 
