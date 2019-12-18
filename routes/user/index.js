@@ -102,7 +102,8 @@ router.post('/overlap', async (req, res, next) => {
     }
     const typeArray = ['id', 'phone', 'email'];
 
-    if (typeArray.indexOf(type) !== -1) {
+    if (typeArray.indexOf(type) === -1) {
+      console.log(type);
       return throwError('입력 값이 잘못되었습니다.', 400);
     }
     const query = { [type]: content };
