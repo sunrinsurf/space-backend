@@ -26,7 +26,8 @@ router.post('/', auth.authroized, async (req, res, next) => {
       images,
       royalty,
       category,
-      royaltyPrice
+      royaltyPrice,
+      tags
     } = req.body;
 
     const ownerId = req.user._id;
@@ -41,7 +42,8 @@ router.post('/', auth.authroized, async (req, res, next) => {
       royalty,
       category,
       participant: [],
-      royaltyPrice
+      royaltyPrice,
+      tags
     });
     await product.save();
 
@@ -111,6 +113,16 @@ router.get('/', async (req, res, next) => {
     if (!product)
       return throwError('조건에 일치하는 제품 데이터가 없습니다.', 404);
 
+    product.map(async data => {
+      const analyzeRawData = new AnalyzeLog({
+        user: userId || 'NOT_DEFINED',
+        date: Date.now(),
+        category: data.category || 'NOT_DEFINED',
+        accessType: 'view'
+      });
+
+      await analyzeRawData.save();
+    });
     res.json({
       product
     });
@@ -189,7 +201,7 @@ router.post('/:product/invite', auth.authroized, async (req, res, next) => {
       user: user || 'NOT_DEFINED',
       date: Date.now(),
       category: product.category || 'NOT_DEFINED',
-      accessType: 'participate'
+      accessType: 'purchase'
     });
 
     analyzeRawData.save();

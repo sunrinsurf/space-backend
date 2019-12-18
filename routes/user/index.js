@@ -24,7 +24,6 @@ router.post('/', async (req, res, next) => {
       password,
       ptoken,
       phone,
-      something,
       nickname,
       email,
       interest,
@@ -77,8 +76,9 @@ router.post('/', async (req, res, next) => {
       email,
       phone,
       address,
+      staticInterest: interest,
       interest,
-      something: something || 'NULL'
+      regdate: Date.now()
     });
     try {
       await user.save();
@@ -102,23 +102,11 @@ router.post('/overlap', async (req, res, next) => {
     }
     const typeArray = ['id', 'phone', 'email'];
 
-    if (typeArray.indexOf(type) !== -1) {
+    if (typeArray.indexOf(type) === -1) {
+      console.log(type);
       return throwError('입력 값이 잘못되었습니다.', 400);
     }
     const query = { [type]: content };
-    // switch (type) {
-    //   case 'id':
-    //     query.uid = content;
-    //     break;
-    //   case 'phone':
-    //     query.phone = content;
-    //     break;
-    //   case 'email':
-    //     query.email = content;
-    //     break;
-    //   default:
-    //     throwError('비교할 수 있는 대상이 아닙니다.', 400);
-    // }
     const user = await User.findOne(query);
     res.json({ overlap: !!user });
   } catch (e) {
