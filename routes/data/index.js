@@ -56,18 +56,21 @@ router.get('/:id/analyze', (req, res, next) => {
 
 router.get('/clear', async (req, res, next) => {
   let result;
-  const startTime = timeNow - 2592000000; //one month
-
-  if (process.env.DATA_REMOVE_ACCESSIBLE) {
-    result = await analyzeData
-      .find()
-      .where('date')
-      .lte(startTime)
-      .remove()
-      .exec();
-    res.status(200).send('데이터가 제거되었습니다.');
-  } else {
-    res.status(403).send('데이터 제거가 허가되지 않았습니다.');
+  const startTime = Date.now() - 31557600000; //one year
+  try {
+    if (process.env.DATA_REMOVE_ACCESSIBLE) {
+      result = await analyzeData
+        .find()
+        .where('date')
+        .lte(startTime)
+        .remove()
+        .exec();
+      res.status(200).send('데이터가 제거되었습니다.');
+    } else {
+      res.status(403).send('데이터 제거가 허가되지 않았습니다.');
+    }
+  } catch (error) {
+    next(error);
   }
 });
 
