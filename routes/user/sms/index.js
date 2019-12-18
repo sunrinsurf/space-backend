@@ -31,7 +31,7 @@ function formatNormalPhone(str) {
   const [num1, num2, num3] = [
     data.slice(0, 3),
     data.slice(3, 7),
-    data.slice(7, 11),
+    data.slice(7, 11)
   ];
   let n = num1;
   if (num2) {
@@ -54,24 +54,29 @@ router.post('/', async (req, res, next) => {
     if (user) {
       return throwError('이미 있는 유저입니다.', 422);
     }
-    const code = process.env.NODE_ENV === 'test' && req.query.code ? req.query.code : getRandomNumber(6);
+    const code =
+      process.env.NODE_ENV === 'test' && req.query.code
+        ? req.query.code
+        : getRandomNumber(6);
     const params = {
       Message: `Space 인증 번호: [${code}]`,
-      PhoneNumber,
+      PhoneNumber
     };
     const cryptedCode = codeCrypto(code);
 
     const chiper = crypto.createCipher('aes-256-gcm', key);
-    const time = process.env.NODE_ENV === 'test' && req.query.time ? parseInt(req.query.time) : new Date().getTime();
+    const time =
+      process.env.NODE_ENV === 'test' && req.query.time
+        ? parseInt(req.query.time)
+        : new Date().getTime();
     let token = chiper.update(
       JSON.stringify({ phone, code: cryptedCode, time }),
       'utf8',
-      'base64',
+      'base64'
     );
     token += chiper.final('base64');
-    const handler = process.env.NODE_ENV !== 'test' && sns
-      .publish(params)
-      .promise();
+    const handler =
+      process.env.NODE_ENV !== 'test' && sns.publish(params).promise();
     try {
       await Promise.resolve(handler);
       res.json({ success: true, token });
@@ -79,7 +84,9 @@ router.post('/', async (req, res, next) => {
       console.error(e);
       throwError('오류가 발생했습니다. 다시 시도해주세요.', 500);
     }
-  } catch (e) { next(e); }
+  } catch (e) {
+    next(e);
+  }
 });
 router.put('/:code', (req, res) => {
   const cryptedCode = codeCrypto(req.params.code);
