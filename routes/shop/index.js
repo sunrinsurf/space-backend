@@ -65,13 +65,13 @@ router.post('/', auth.authroized, async (req, res, next) => {
   }
 });
 
-router.get('/', async (req, res, next) => {
+router.get('/', auth.parseAutorized, async (req, res, next) => {
   //get product info on MAINMENU generally
   try {
     const limit = req.query.limit || 10;
     let product;
 
-    const userData = await User.findOne({ _id: req.query._id });
+    const userData = req.user && (await User.findById(req.user._id));
     if (userData) {
       //유저정보가 있을때
       product = await Product.find({}, [
