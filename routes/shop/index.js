@@ -113,9 +113,9 @@ router.get('/', async (req, res, next) => {
     if (!product)
       return throwError('조건에 일치하는 제품 데이터가 없습니다.', 404);
 
-    product.map(async data => {
+    product.forEach(async data => {
       const analyzeRawData = new AnalyzeLog({
-        user: userId || 'NOT_DEFINED',
+        user: req.user.id || 'NOT_DEFINED',
         date: Date.now(),
         category: data.category || 'NOT_DEFINED',
         accessType: 'view'
