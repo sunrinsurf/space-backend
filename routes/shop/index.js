@@ -30,6 +30,12 @@ router.post('/', auth.authroized, async (req, res, next) => {
       tags
     } = req.body;
 
+    if (royalty !== 'afterContact' && !royaltyPrice) {
+      return throwError('가격을 입력해 주세요.', 400);
+    }
+    if (timeToUse !== 'afterContact' && !timeToUseDate) {
+      return throwError('일자를 입력해 주세요.', 400);
+    }
     const ownerId = req.user._id;
     const product = new Product({
       owner: ownerId,
