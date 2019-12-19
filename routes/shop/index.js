@@ -135,7 +135,8 @@ router.get('/search', async (req, res, next) => {
 
     const productData = await Product.find()
       .where('title')
-      .regex(searchString);
+      .regex(searchString)
+      .sort('-createdAt');
 
     if (productData.length === 0) {
       return throwError('찾고자 하는 상품이 존재하지 않습니다.', 404);
