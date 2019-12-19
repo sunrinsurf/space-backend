@@ -150,6 +150,22 @@ router.get('/:product/images/:idx', async (req, res, next) => {
   }
 });
 
+router.get('/search', async (req, res, next) => {
+  try {
+    const searchString = new RegExp(req.query.search);
+    const productData = await Product.find()
+      .where('title')
+      .regex(searchString);
+
+    if (productData.length === 0) {
+      return throwError('찾고자 하는 상품이 존재하지 않습니다.', 404);
+    }
+    res.json({ productData });
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.get('/:product', async (req, res, next) => {
   //get specified product info
   try {
