@@ -7,7 +7,6 @@ const sharp = require('sharp');
 const auth = require('../../lib/middlewares/auth');
 const throwError = require('../../lib/throwError');
 const Image = require('../../models/image');
-
 const router = express.Router();
 const destination = path.resolve(__dirname, '../../images');
 const upload = multer({
