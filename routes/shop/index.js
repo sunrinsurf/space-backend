@@ -9,8 +9,6 @@ const auth = require('../../lib/middlewares/auth');
 
 const Product = require('../../models/product');
 const AnalyzeLog = require('../../models/analyzeLog');
-const User = require('../../models/user');
-//const TransLog = require('../../models/transactionLog');
 
 router.use(bodyParser.json({ extended: true }));
 
@@ -130,7 +128,11 @@ router.get('/:product/images/:idx', async (req, res, next) => {
 
 router.get('/search', async (req, res, next) => {
   try {
-    const searchString = new RegExp(req.query.search);
+    if (!req.query.search) {
+      return throwError('검색 텍스트가 비어있습니다.', 400);
+    }
+    const searchString = new RegExp(req.query.search, 'i');
+
     const productData = await Product.find()
       .where('title')
       .regex(searchString);
