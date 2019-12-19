@@ -156,11 +156,11 @@ router.get('/:product/images/:idx', async (req, res, next) => {
   }
 });
 
-router.get('/:product', async (req, res, next) => {
+router.get('/:product', auth.parseAutorized, async (req, res, next) => {
   //get specified product info
   try {
     const productId = req.params.product;
-    const userId = req.query._id;
+    const userId = req.user._id;
 
     const product = await Product.findOne({ _id: productId }).populate(
       'owner',
