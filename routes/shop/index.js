@@ -30,6 +30,12 @@ router.post('/', auth.authroized, async (req, res, next) => {
       tags
     } = req.body;
 
+    if (royalty !== 'afterContact' && !royaltyPrice) {
+      return throwError('가격을 입력해 주세요.', 400);
+    }
+    if (timeToUse !== 'afterContact' && !timeToUseDate) {
+      return throwError('일자를 입력해 주세요.', 400);
+    }
     const ownerId = req.user._id;
     const product = new Product({
       owner: ownerId,
@@ -68,61 +74,33 @@ router.post('/', auth.authroized, async (req, res, next) => {
 router.get('/', auth.parseAutorized, async (req, res, next) => {
   //get product info on MAINMENU generally
   try {
-    const limit = req.query.limit || 10;
-    let product;
+    const queryLimit = req.query.limit && parseInt(req.query.limit, 10);
+    const limit = (queryLimit && queryLimit < 8 && queryLimit) || 8;
+    const pagination = (req.query.page && parseInt(req.query.page, 10)) || 1;
 
-    const userData = req.user && (await User.findById(req.user._id));
-    if (userData) {
-      //유저정보가 있을때
-      product = await Product.find({}, [
-        'owner',
-        'title',
-        '_id',
-        'createdAt',
-        'category',
-        'timeToUse',
-        'timeToUseDate',
-        'royalty',
-        'royaltyPrice',
-        'participant',
-        'images'
-      ])
-        .in('category', userData.interest)
-        .populate('owner', ['nickname'])
-        .sort('-createdAt')
-        .limit(parseInt(limit)); //interest 안에 있는 데이터 중 가장 최근순으로 dataCount 만큼의 데이터를 갖고옴
-    } else {
-      //유저 정보가 없을때
-      product = await Product.find({}, [
-        'owner',
-        'title',
-        '_id',
-        'createdAt',
-        'category',
-        'timeToUse',
-        'timeToUseDate',
-        'royalty',
-        'royaltyPrice',
-        'participant',
-        'images'
-      ])
-        .populate('owner', ['nickname'])
-        .sort('-createdAt')
-        .limit(parseInt(limit)); //interest 안에 있는 데이터 중 가장 최근순으로 dataCount 만큼의 데이터를 갖고옴
-    }
+    if (pagination < 1) return throwError('1페이지부터 찾아 주세요.', 400);
+    let product;
+    //const userData = req.user && (await User.findById(req.user._id));
+    product = await Product.find({}, [
+      'owner',
+      'title',
+      '_id',
+      'createdAt',
+      'category',
+      'timeToUse',
+      'timeToUseDate',
+      'royalty',
+      'royaltyPrice',
+      'participant',
+      'images'
+    ])
+      .populate('owner', ['nickname'])
+      .sort('-createdAt')
+      .skip((pagination - 1) * limit)
+      .limit(parseInt(limit));
     if (!product)
       return throwError('조건에 일치하는 제품 데이터가 없습니다.', 404);
 
-    product.forEach(async data => {
-      const analyzeRawData = new AnalyzeLog({
-        user: req.user.id || 'NOT_DEFINED',
-        date: Date.now(),
-        category: data.category || 'NOT_DEFINED',
-        accessType: 'view'
-      });
-
-      await analyzeRawData.save();
-    });
     res.json({
       product
     });
@@ -166,11 +144,10 @@ router.get('/search', async (req, res, next) => {
   }
 });
 
-router.get('/:product', async (req, res, next) => {
+router.get('/:product', auth.parseAutorized, async (req, res, next) => {
   //get specified product info
   try {
     const productId = req.params.product;
-    const userId = req.query._id;
 
     const product = await Product.findOne({ _id: productId }).populate(
       'owner',
@@ -179,7 +156,7 @@ router.get('/:product', async (req, res, next) => {
     if (!product) return throwError('존재하지 않는 상품입니다.', 404);
 
     const analyzeRawData = new AnalyzeLog({
-      user: userId || 'NOT_DEFINED',
+      user: (req.user && req.user._id) || 'NOT_DEFINED',
       date: Date.now(),
       category: product.category || 'NOT_DEFINED',
       accessType: 'view'
