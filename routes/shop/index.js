@@ -160,7 +160,6 @@ router.get('/:product', auth.parseAutorized, async (req, res, next) => {
   //get specified product info
   try {
     const productId = req.params.product;
-    const userId = req.user._id;
 
     const product = await Product.findOne({ _id: productId }).populate(
       'owner',
@@ -169,7 +168,7 @@ router.get('/:product', auth.parseAutorized, async (req, res, next) => {
     if (!product) return throwError('존재하지 않는 상품입니다.', 404);
 
     const analyzeRawData = new AnalyzeLog({
-      user: userId || 'NOT_DEFINED',
+      user: (req.user && req.user._id) || 'NOT_DEFINED',
       date: Date.now(),
       category: product.category || 'NOT_DEFINED',
       accessType: 'view'
