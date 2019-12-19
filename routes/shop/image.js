@@ -1,14 +1,11 @@
 const express = require('express');
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
 const sharp = require('sharp');
 
 const auth = require('../../lib/middlewares/auth');
 const throwError = require('../../lib/throwError');
 const Image = require('../../models/image');
 const router = express.Router();
-const destination = path.resolve(__dirname, '../../images');
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
