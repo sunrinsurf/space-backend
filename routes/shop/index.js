@@ -77,9 +77,15 @@ router.get('/', auth.parseAutorized, async (req, res, next) => {
     const pagination = (req.query.page && parseInt(req.query.page, 10)) || 1;
 
     if (pagination < 1) return throwError('1페이지부터 찾아 주세요.', 400);
-    let product;
     //const userData = req.user && (await User.findById(req.user._id));
-    product = await Product.find({}, [
+    const query = req.query.search
+      ? {
+          title: {
+            $regex: new RegExp(req.query.search, 'gi')
+          }
+        }
+      : {};
+    const productQuery = Product.find(query, [
       'owner',
       'title',
       '_id',
@@ -96,6 +102,8 @@ router.get('/', auth.parseAutorized, async (req, res, next) => {
       .sort('-createdAt')
       .skip((pagination - 1) * limit)
       .limit(parseInt(limit));
+
+    const product = await productQuery;
     if (!product)
       return throwError('조건에 일치하는 제품 데이터가 없습니다.', 404);
 
@@ -123,27 +131,6 @@ router.get('/:product/images/:idx', async (req, res, next) => {
     res.send(image.data);
   } catch (e) {
     next(e);
-  }
-});
-
-router.get('/search', async (req, res, next) => {
-  try {
-    if (!req.query.search) {
-      return throwError('검색 텍스트가 비어있습니다.', 400);
-    }
-    const searchString = new RegExp(req.query.search, 'i');
-
-    const productData = await Product.find()
-      .where('title')
-      .regex(searchString)
-      .sort('-createdAt');
-
-    if (productData.length === 0) {
-      return throwError('찾고자 하는 상품이 존재하지 않습니다.', 404);
-    }
-    res.json({ productData });
-  } catch (error) {
-    next(error);
   }
 });
 
