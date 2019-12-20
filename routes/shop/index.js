@@ -82,7 +82,7 @@ router.get('/', auth.parseAutorized, async (req, res, next) => {
       ? {
           title: {
             $regex: new RegExp(
-              '(' + req.query.search.toString().replace(' ', '|') + ')',
+              '(' + req.query.search.toString().replace(/ /g, '|') + ')',
               'i'
             )
           }
