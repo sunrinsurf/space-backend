@@ -172,6 +172,9 @@ router.post('/:product/invite', auth.authroized, async (req, res, next) => {
     if (product.owner === user) {
       return throwError('자신의 상품에는 참여하실 수 없습니다.', 400);
     }
+    if (product.person <= product.participant.length + 1) {
+      return throwError('참여 가능한 인원이 꽉 찼습니다.', 400);
+    }
 
     for (const p of product.participant) {
       if (user.toString() === p.toString())

@@ -23,7 +23,6 @@ router.post('/:id/join', auth.authroized, async (req, res, next) => {
       });
       await chat.save();
     }
-
     const chatData = chat.toJSON();
     chatData.product.owner = await User.findById(chatData.product.owner, [
       'nickname'
