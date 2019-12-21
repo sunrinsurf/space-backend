@@ -20,7 +20,7 @@ const upload = multer({
   preservePath: ''
 });
 
-router.post('/', auth.authroized, upload.any(), (req, res, next) => {
+router.post('/', auth.parseAutorized, upload.any(), (req, res, next) => {
   if (!req.files.length) {
     return throwError('파일이 업로드되지 않았습니다. 요청을 확인하세요.', 400);
   }
@@ -40,7 +40,7 @@ router.post('/', auth.authroized, upload.any(), (req, res, next) => {
           image,
           thumbnail,
           type,
-          by: req.user._id
+          by: req.user ? req.user._id : null
         });
 
         await img.save();

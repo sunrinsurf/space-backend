@@ -45,6 +45,9 @@ const userSchema = new mongoose.Schema({
   regdate: {
     type: Date,
     required: true
+  },
+  profileImage: {
+    type: String
   }
 });
 

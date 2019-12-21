@@ -27,7 +27,8 @@ router.post('/', async (req, res, next) => {
       nickname,
       email,
       interest,
-      address
+      address,
+      profileImage
     } = req.body;
     // promisify
     const randomBytes = util.promisify(crypto.randomBytes);
@@ -78,6 +79,7 @@ router.post('/', async (req, res, next) => {
       address,
       staticInterest: interest,
       interest,
+      profileImage,
       regdate: Date.now()
     });
     try {
