@@ -100,7 +100,8 @@ router.get('/', auth.parseAutorized, async (req, res, next) => {
       'royalty',
       'royaltyPrice',
       'participant',
-      'images'
+      'images',
+      'tags'
     ])
       .populate('owner', ['nickname'])
       .sort('-createdAt')
