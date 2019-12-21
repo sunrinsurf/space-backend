@@ -45,10 +45,6 @@ const userSchema = new mongoose.Schema({
   regdate: {
     type: Date,
     required: true
-  },
-  tags: {
-    type: [String],
-    default: []
   }
 });
 

@@ -29,6 +29,10 @@ const productSchema = new mongoose.Schema({
     ref: 'image',
     required: true
   },
+  tags: {
+    type: [String],
+    default: []
+  },
   royalty: {
     type: String,
     enum: ['afterContact', 'monthly', 'weekly'],
@@ -52,7 +56,8 @@ const productSchema = new mongoose.Schema({
   },
   createdAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
+    required: true
   }
 });
 
