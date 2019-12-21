@@ -145,6 +145,7 @@ router.get('/:id', auth.authroized, async (req, res, next) => {
       phone: result.phone,
       address: result.address,
       interest: result.interest,
+      profileImage: result.profileImage,
       invitedProducts,
       createdProducts
     };
