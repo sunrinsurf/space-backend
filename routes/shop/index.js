@@ -97,7 +97,8 @@ router.get('/', auth.parseAutorized, async (req, res, next) => {
       'royaltyPrice',
       'participant',
       'images',
-      'tags'
+      'tags',
+      'person'
     ])
       .populate('owner', ['nickname'])
       .sort('-createdAt')
