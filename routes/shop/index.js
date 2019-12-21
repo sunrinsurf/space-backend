@@ -78,11 +78,10 @@ router.get('/', auth.parseAutorized, async (req, res, next) => {
 
     if (pagination < 1) return throwError('1페이지부터 찾아 주세요.', 400);
     //const userData = req.user && (await User.findById(req.user._id));
+    const $regex = req.query.search && new RegExp(req.query.search, 'gi');
     const query = req.query.search
       ? {
-          title: {
-            $regex: new RegExp(req.query.search, 'gi')
-          }
+          $or: [{ title: { $regex } }, { category: { $regex } }]
         }
       : {};
     const productQuery = Product.find(query, [
