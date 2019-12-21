@@ -142,8 +142,7 @@ router.get('/:product', auth.parseAutorized, async (req, res, next) => {
 
     const product = await Product.findOne({ _id: productId }).populate(
       'owner',
-      ['nickname'],
-      'tags'
+      ['nickname']
     );
     if (!product) return throwError('존재하지 않는 상품입니다.', 404);
 
