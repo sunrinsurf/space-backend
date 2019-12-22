@@ -170,7 +170,6 @@ router.get('/:id/interest', auth.authroized, async (req, res, next) => {
 // profile modifys
 router.put('/profileImage', auth.authroized, async (req, res, next) => {
   try {
-    console.log(req.body);
     const { profileImage } = req.body;
     if (!profileImage) {
       return throwError('profileImage 필드가 필요합니다.', 400);
@@ -184,6 +183,20 @@ router.put('/profileImage', auth.authroized, async (req, res, next) => {
     res.json({
       success: true
     });
+  } catch (e) {
+    next(e);
+  }
+});
+router.put('/nickname', auth.authroized, async (req, res, next) => {
+  try {
+    const { nickname } = req.body;
+    if (!nickname) return throwError('nickname 필드가 필요합니다.');
+    const user = await User.findById(req.user._id);
+    if (!user) return throwError('존재하지 않는 유저입니다.', 404);
+
+    user.nickname = nickname;
+    await user.save();
+    res.json({ success: true });
   } catch (e) {
     next(e);
   }
