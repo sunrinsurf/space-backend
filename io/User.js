@@ -9,11 +9,13 @@ class User {
    * @param {string} userId
    * @param {string} userNickname
    */
-  constructor(socket, chatId, userId, userNickname) {
+  constructor(socket, chatId, userId, userNickname, profileImage) {
     this.chatId = chatId;
     this.userId = userId;
     this.nickname = userNickname;
     this.socket = socket;
+    this.profileImage = profileImage;
+
     this.socket.join(this.chatId);
     this.socket.on('disconnect', this.disconnect.bind(this));
     this.socket.on('chat', this.chat.bind(this));
@@ -29,7 +31,7 @@ class User {
       }
     })
       .sort('-time')
-      .populate('by', ['nickname'])
+      .populate('by', ['nickname', 'profileImage'])
       .limit(100);
     const chatLogs = _chatLogs.sort();
     const data = {};
@@ -61,39 +63,12 @@ class User {
     this.socket.broadcast.emit('chat', {
       message,
       nickname: this.nickname,
+      profileImage: this.profileImage,
       time
     });
 
     chatLog.save();
   }
 }
-
-/*
-    socket.on('disconnect', () => {
-      const roomId = Object.keys(socket.rooms)[0];
-      room.removeUser(roomId, socket.id);
-      socket.broadcast.emit('room_data', {
-        room: room.getData(roomId)
-      });
-    });
-    socket.on('chat', message => {
-      const roomId = Object.keys(socket.rooms)[0];
-      console.log(Object.keys(socket.rooms));
-      const chatLog = new ChatLog({
-        message,
-        by: room.rooms[roomId][socket.id],
-        chat: chat._id,
-        time: Date.now()
-      });
-      socket.broadcast.emit('chat', {
-        message,
-        nickname: room.getUsername(socket.id),
-        time: Date.now()
-      });
-
-      chatLog.save();
-    });
-
-*/
 
 module.exports = User;

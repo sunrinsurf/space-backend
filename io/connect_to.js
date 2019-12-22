@@ -17,8 +17,17 @@ module.exports = socket => {
       if (!chat) {
         return socket.emit('error', '없는 채팅방입니다.');
       }
-      const user = await User.findById(userdata._id, ['nickname']);
-      room.addUser(socket, chat._id, user._id, user.nickname);
+      const user = await User.findById(userdata._id, [
+        'nickname',
+        'profileImage'
+      ]);
+      room.addUser(
+        socket,
+        chat._id,
+        user._id,
+        user.nickname,
+        user.profileImage
+      );
     })().catch(e => {
       throw e;
     });

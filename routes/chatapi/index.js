@@ -25,11 +25,13 @@ router.post('/:id/join', auth.authroized, async (req, res, next) => {
     }
     const chatData = chat.toJSON();
     chatData.product.owner = await User.findById(chatData.product.owner, [
-      'nickname'
+      'nickname',
+      'profileImage'
     ]);
     for (const i in chatData.product.participant) {
       const user = await User.findById(chatData.product.participant[i], [
-        'nickname'
+        'nickname',
+        'profileImage'
       ]);
       if (!user) {
         chatData.product.participant[i] = null;
