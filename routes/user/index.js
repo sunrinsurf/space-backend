@@ -201,4 +201,18 @@ router.put('/nickname', auth.authroized, async (req, res, next) => {
     next(e);
   }
 });
+router.put('/interest', auth.authroized, async (req, res, next) => {
+  try {
+    const { interest } = req.body;
+    if (!interest) return throwError('interest 필드가 필요합니다.');
+    const user = await User.findById(req.user._id);
+    if (!user) return throwError('존재하지 않는 유저입니다.', 404);
+
+    user.interest = interest;
+    await user.save();
+    res.json({ success: true });
+  } catch (e) {
+    next(e);
+  }
+});
 module.exports = router;
