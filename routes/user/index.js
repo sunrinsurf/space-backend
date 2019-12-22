@@ -79,8 +79,7 @@ router.post('/', async (req, res, next) => {
       address,
       staticInterest: interest,
       interest,
-      profileImage,
-      regdate: Date.now()
+      profileImage
     });
     try {
       await user.save();
@@ -168,17 +167,25 @@ router.get('/:id/interest', auth.authroized, async (req, res, next) => {
   }
 });
 
-router.post('/modify', async (req, res, next) => {
+// profile modifys
+router.put('/profileImage', auth.authroized, async (req, res, next) => {
   try {
-    try {
-      //토큰 검증
-      jwt.verify(req.headers['x-access-token'], process.env.TOKEN_KEY || 'jwt');
-    } catch (e) {
-      return throwError('토큰 검증에 실패했습니다.', 403);
+    console.log(req.body);
+    const { profileImage } = req.body;
+    if (!profileImage) {
+      return throwError('profileImage 필드가 필요합니다.', 400);
     }
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return throwError('존재하지 않는 유저입니다.', 404);
+    }
+    user.profileImage = profileImage;
+    await user.save();
+    res.json({
+      success: true
+    });
   } catch (e) {
     next(e);
   }
 });
-
 module.exports = router;

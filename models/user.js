@@ -40,11 +40,12 @@ const userSchema = new mongoose.Schema({
   },
   staticInterest: {
     type: [String],
-    required: true
+    required: true,
+    default: []
   },
   regdate: {
     type: Date,
-    required: true
+    default: Date.now
   },
   profileImage: {
     type: String
