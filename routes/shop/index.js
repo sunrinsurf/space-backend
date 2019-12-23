@@ -151,15 +151,6 @@ router.get('/:product', auth.parseAutorized, async (req, res, next) => {
     );
     if (!product) return throwError('존재하지 않는 상품입니다.', 404);
 
-    const analyzeRawData = new AnalyzeLog({
-      user: (req.user && req.user._id) || 'NOT_DEFINED',
-      date: Date.now(),
-      category: product.category || 'NOT_DEFINED',
-      accessType: 'view'
-    });
-
-    analyzeRawData.save();
-
     res.json({ product });
   } catch (e) {
     next(e);
