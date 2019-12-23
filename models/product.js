@@ -61,7 +61,8 @@ const productSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    default: 'pre'
+    enum: ['PRE_SHARE', 'IN_PROGRESS', 'END'],
+    default: 'PRE_SHARE'
   }
 });
 

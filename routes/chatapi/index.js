@@ -9,15 +9,16 @@ const throwError = require('../../lib/throwError');
 const auth = require('../../lib/middlewares/auth');
 router.post('/:id/join', auth.authroized, async (req, res, next) => {
   try {
+    const product = await Product.findById(req.params.id, ['_id']);
+    if (!product) {
+      return throwError('존재하지 않는 채팅입니다.', 404);
+    }
+
     let chat = await Chat.findOne({ product: req.params.id }).populate(
       'product',
-      ['title', 'contents', 'participant', 'owner']
+      ['title', 'contents', 'participant', 'owner', 'status']
     );
     if (!chat) {
-      const product = await Product.findById(req.params.id);
-      if (!product) {
-        return throwError('존재하지 않는 채팅입니다.', 404);
-      }
       chat = new Chat({
         product: req.params.id
       });

@@ -102,7 +102,8 @@ router.get('/', auth.parseAutorized, async (req, res, next) => {
       'participant',
       'images',
       'tags',
-      'person'
+      'person',
+      'status'
     ])
       .populate('owner', ['nickname'])
       .sort('-createdAt')
@@ -188,6 +189,8 @@ router.post('/:product/invite', auth.authroized, async (req, res, next) => {
     if (!product) {
       return throwError('존재하지 않는 상품입니다.', 404);
     }
+    if (product.status !== 'PRE_SHARE')
+      return throwError('공유가 진행 중이거나 끝난 상품입니다.', 409);
     if (product.owner === user) {
       return throwError('자신의 상품에는 참여하실 수 없습니다.', 400);
     }
@@ -215,6 +218,41 @@ router.post('/:product/invite', auth.authroized, async (req, res, next) => {
     res.json({
       success: true
     });
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.post('/:product/start', auth.authroized, async (req, res, next) => {
+  try {
+    const product = await Product.findById(req.params.product);
+
+    if (!product) {
+      return throwError('제품을 찾을 수 없습니다.', 404);
+    }
+    if (product.owner.toString() !== req.user._id) {
+      return throwError('이 제품의 소유자가 아닙니다.', 403);
+    }
+    product.status = 'IN_PROGRESS';
+    await product.save();
+    res.json({ success: true });
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.post('/:product/end', auth.authroized, async (req, res, next) => {
+  try {
+    const product = await Product.findById(req.params.product);
+
+    if (!product) {
+      return throwError('제품을 찾을 수 없습니다.', 404);
+    }
+    if (product.owner.toString() !== req.user._id) {
+      return throwError('이 제품의 소유자가 아닙니다.', 403);
+    }
+    await product.remove();
+    res.json({ success: true });
   } catch (e) {
     next(e);
   }
