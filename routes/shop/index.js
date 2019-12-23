@@ -173,10 +173,7 @@ router.put('/:product', auth.parseAutorized, async (req, res, next) => {
     const productId = req.params.product;
     const status = req.query.status;
 
-    await Product.findOneAndUpdate(
-      { _id: productId },
-      { $set: { sharingStatus: status } }
-    );
+    await Product.findOneAndUpdate({ _id: productId }, { $set: { status } });
     res.status(201).send(true);
   } catch (error) {
     next(error);

@@ -59,7 +59,7 @@ const productSchema = new mongoose.Schema({
     default: Date.now,
     required: true
   },
-  sharingStatus: {
+  status: {
     type: String,
     default: 'pre'
   }
