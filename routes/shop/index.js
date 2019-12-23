@@ -157,6 +157,17 @@ router.get('/:product', auth.parseAutorized, async (req, res, next) => {
   }
 });
 
+router.delete('/:product', auth.parseAutorized, async (req, res, next) => {
+  try {
+    const productId = req.params.product;
+
+    await Product.findOneAndDelete({ _id: productId });
+    res.status(201).send(true);
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.post('/:product/invite', auth.authroized, async (req, res, next) => {
   try {
     const user = req.user._id;
