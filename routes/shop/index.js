@@ -81,7 +81,11 @@ router.get('/', auth.parseAutorized, async (req, res, next) => {
     const $regex = req.query.search && new RegExp(req.query.search, 'gi');
     const query = req.query.search
       ? {
-          $or: [{ title: { $regex } }, { category: { $regex } }]
+          $or: [
+            { title: { $regex } },
+            { category: { $regex } },
+            { tags: { $in: $regex } }
+          ]
         }
       : {};
 
