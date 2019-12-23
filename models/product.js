@@ -58,6 +58,10 @@ const productSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
     required: true
+  },
+  sharingStatus: {
+    type: String,
+    default: 'pre'
   }
 });
 
