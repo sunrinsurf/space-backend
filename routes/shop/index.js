@@ -168,6 +168,21 @@ router.delete('/:product', auth.parseAutorized, async (req, res, next) => {
   }
 });
 
+router.put('/:product', auth.parseAutorized, async (req, res, next) => {
+  try {
+    const productId = req.params.product;
+    const status = req.query.status;
+
+    await Product.findOneAndUpdate(
+      { _id: productId },
+      { $set: { sharingStatus: status } }
+    );
+    res.status(201).send(true);
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.post('/:product/invite', auth.authroized, async (req, res, next) => {
   try {
     const user = req.user._id;
