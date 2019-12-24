@@ -78,16 +78,23 @@ router.get('/', auth.parseAutorized, async (req, res, next) => {
 
     if (pagination < 1) return throwError('1페이지부터 찾아 주세요.', 400);
     //const userData = req.user && (await User.findById(req.user._id));
-    const $regex = req.query.search && new RegExp(req.query.search, 'gi');
-    const query = req.query.search
-      ? {
-          $or: [
-            { title: { $regex } },
-            { category: { $regex } },
-            { tags: { $in: $regex } }
-          ]
-        }
-      : {};
+    let $regex;
+    let query;
+    if (req.query.search) {
+      $regex = new RegExp(
+        '(' + req.query.search.toString().replace(/ /g, '|') + ')',
+        'gi'
+      );
+      query = req.query.search
+        ? {
+            $or: [
+              { title: { $regex } },
+              { category: { $regex } },
+              { tags: { $in: $regex } }
+            ]
+          }
+        : {};
+    }
 
     const productQuery = Product.find(query, [
       'owner',
