@@ -81,11 +81,13 @@ router.get('/', auth.parseAutorized, async (req, res, next) => {
     let $regex;
     let query;
     if (req.query.search) {
+      const bannedChar = new RegExp('[^a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ ]', 'gi');
+      const search = req.query.search.toString().replace(bannedChar, ' ');
       $regex = new RegExp(
-        '(' + req.query.search.toString().replace(/ /g, '|') + ')',
+        '(' + search.toString().replace(/ /g, '|') + ')',
         'gi'
       );
-      query = req.query.search
+      query = search
         ? {
             $or: [
               { title: { $regex } },
